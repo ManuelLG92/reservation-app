@@ -1,4 +1,4 @@
-import { GenericCrud } from "../common/generic-crud.ts";
+import { GenericCrud } from "../common/persistence/generic-crud.ts";
 import { Seat, SeatOutputProps } from "./seat.entity.ts";
 
 export class SeatRepository extends GenericCrud<SeatOutputProps, Seat> {

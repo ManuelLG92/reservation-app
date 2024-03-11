@@ -1,7 +1,7 @@
 import {
   AggregateRoot,
   AggregateRootProps,
-} from "../common/aggregate-root.entity.ts";
+} from "../common/entity/aggregate-root.entity.ts";
 import { Floor, FloorPropsOut } from "../floor/floor.entity.ts";
 
 export interface OfficeProps extends AggregateRootProps {

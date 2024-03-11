@@ -1,10 +1,17 @@
-import { Router } from "oak";
-import { DiKeys, diContainer } from "../common/DIContainer.ts";
+import { Context } from "oak";
+import { diContainer, DiKeys } from "../common/di-container/di-container.ts";
+import { RouterInterface, RouterMethodsRegister } from "../common/router/contracts.ts";
 
-export const companiesRouter = new Router();
+
+
 const companyRepository = diContainer.resolve(DiKeys.CompanyRepository);
-companiesRouter
-  .get("/companies", (ctx) => {
-    const companies = companyRepository.findAll();
-    ctx.response.body = companies;
-  });
+export const companyRoutes: RouterInterface[] = [
+  {
+    method: RouterMethodsRegister.get,
+    path: "companies",
+    handler: (ctx: Context) => {
+      const companies = companyRepository.findAll()
+      ctx.response.body = companies;
+    }
+  }
+]

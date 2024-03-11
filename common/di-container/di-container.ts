@@ -1,9 +1,10 @@
-import { CompanyRepository } from "../company/company.repository.ts";
-import { FloorRepository } from "../floor/floor.repository%20copy.ts";
-import { OfficeRepository } from "../office/office.repository%20copy.ts";
-import { SeatRepository } from "../seat/seat.repository%20copy.ts";
-import { SlotRepository } from "../slots/slot.repository%20copy.ts";
-import { UserRepository } from "../user/user.repository%20copy.ts";
+import { CompanyRepository } from "../../company/company.repository.ts";
+import { FloorRepository } from "../../floor/floor.repository%20copy.ts";
+import { OfficeRepository } from "../../office/office.repository%20copy.ts";
+import { SeatRepository } from "../../seat/seat.repository%20copy.ts";
+import { SlotRepository } from "../../slots/slot.repository%20copy.ts";
+import { UserRepository } from "../../user/user.repository%20copy.ts";
+import { Logger, LoggerInterface } from "../observability/logger.ts";
 
 export enum DiKeys {
   CompanyRepository = "CompanyRepository",
@@ -12,6 +13,7 @@ export enum DiKeys {
   SeatRepository = "SeatRepository",
   SlotRepository = "SlotsRepository",
   UserRepository = "UserRepository",
+  Logger = "Logger",
 }
 
 type TypeMatching = {
@@ -21,6 +23,7 @@ type TypeMatching = {
   [DiKeys.SeatRepository]: SeatRepository;
   [DiKeys.SlotRepository]: SlotRepository;
   [DiKeys.UserRepository]: UserRepository;
+  [DiKeys.Logger]: LoggerInterface;
 };
 class DIContainer {
   private dependencies: Partial<Record<DiKeys, unknown>> = {};
@@ -51,6 +54,7 @@ const officeRepository = new OfficeRepository();
 const seatRepository = new SeatRepository();
 const slotRepository = new SlotRepository();
 const userRepository = new UserRepository();
+const logger = new Logger();
 
 diContainer.register(DiKeys.CompanyRepository, companyRepository);
 diContainer.register(DiKeys.FloorRepository, floorRepository);
@@ -58,3 +62,6 @@ diContainer.register(DiKeys.OfficeRepository, officeRepository);
 diContainer.register(DiKeys.SeatRepository, seatRepository);
 diContainer.register(DiKeys.SlotRepository, slotRepository);
 diContainer.register(DiKeys.UserRepository, userRepository);
+diContainer.register(DiKeys.Logger, logger);
+
+export const getLogger = () => diContainer.resolve(DiKeys.Logger);

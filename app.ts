@@ -1,16 +1,18 @@
-import { Application } from "oak";
+import { Application, Router } from "oak";
 import { mainFixtures } from "./fixtures.main.ts";
-import { companiesRouter } from "./company/company.router.ts";
+// import { companiesRouter } from "./company/company.router.ts";
+import { getLogger } from "./common/di-container/di-container.ts";
+import registerRoutes from "./common/router/register/register.ts";
 
 const app = new Application();
 mainFixtures();
+const logger = getLogger();
 // Logger
 app.use(async (ctx, next) => {
   await next();
   const rt = ctx.response.headers.get("X-Response-Time");
-  console.log(`${ctx.request.method} ${ctx.request.url} - ${rt}`);
+  logger.info(`${ctx.request.method} ${ctx.request.url} - ${rt}`);
 });
-
 // Timing
 app.use(async (ctx, next) => {
   const start = Date.now();
@@ -19,7 +21,9 @@ app.use(async (ctx, next) => {
   ctx.response.headers.set("X-Response-Time", `${ms}ms`);
 });
 
-app.use(companiesRouter.routes())
+const router = new Router();
+registerRoutes(router);
+app.use(router.routes());
 
 // Hello World!
 app.use((ctx) => {
