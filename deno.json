@@ -1,6 +1,9 @@
 {
   "imports": {
     "log": "https://deno.land/std@0.219.0/log/mod.ts",
+    "test": "https://deno.land/std@0.219.0/testing/bdd.ts",
+    "asserts": "https://deno.land/std@0.219.0/assert/mod.ts",
+    "mock": "https://deno.land/std@0.219.0/testing/mock.ts",
     "zod": "https://deno.land/x/zod@v3.22.2/mod.ts",
     "yaml": "https://deno.land/x/yaml@v2.3.4/mod.ts",
     "oak": "https://deno.land/x/oak@14.2.0/mod.ts"

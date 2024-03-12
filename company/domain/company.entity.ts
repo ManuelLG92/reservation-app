@@ -41,6 +41,12 @@ export class Company extends AggregateRoot<CompanyPropsOut> {
     this.offices.push(newOffice);
   }
 
+  bulkAddOffices(offices: Office[]) {
+    offices.forEach((office) => {
+      this.addOffice(office);
+    });
+  }
+
   toJson() {
     return {
       ...this.aggregateRootPrimitives(),
