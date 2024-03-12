@@ -1,33 +1,51 @@
-import { Application, Router } from "oak";
+import { Application, isHttpError, Router } from "oak";
 import { mainFixtures } from "./fixtures.main.ts";
-// import { companiesRouter } from "./company/company.router.ts";
 import { getLogger } from "./common/di-container/di-container.ts";
 import registerRoutes from "./common/router/register/register.ts";
 
 const app = new Application();
 mainFixtures();
 const logger = getLogger();
+
+// Timing
+app.use(async (ctx, next) => {
+  const start = Date.now();
+  try {
+    await next();
+  } finally {
+    console.log("after end");
+    ctx.response.headers.set("X-Response-Time", `${Date.now() - start}ms`);
+  }
+});
+
+// Error handler
+app.use(async (ctx, next) => {
+  const start = Date.now();
+  try {
+    await next();
+    ctx.response.headers.set("X-Response-Time", `${Date.now() - start}ms`);
+  } catch (error) {
+    console.log("Something was wrong. Cause ", (error as Error).message);
+    ctx.response.headers.set("X-Response-Time", `${Date.now() - start}ms`);
+    if (isHttpError(error)) {
+      ctx.response.status = error.status;
+    } else {
+      ctx.response.status = 500;
+    }
+    ctx.response.body = { error: error.message };
+    ctx.response.type = "json";
+  }
+});
+
 // Logger
 app.use(async (ctx, next) => {
   await next();
   const rt = ctx.response.headers.get("X-Response-Time");
   logger.info(`${ctx.request.method} ${ctx.request.url} - ${rt}`);
 });
-// Timing
-app.use(async (ctx, next) => {
-  const start = Date.now();
-  await next();
-  const ms = Date.now() - start;
-  ctx.response.headers.set("X-Response-Time", `${ms}ms`);
-});
 
 const router = new Router();
 registerRoutes(router);
 app.use(router.routes());
-
-// Hello World!
-app.use((ctx) => {
-  ctx.response.body = "Hello World!";
-});
 
 await app.listen({ port: 8123 });

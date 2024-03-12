@@ -1,9 +1,10 @@
-import { CompanyRepository } from "../../company/company.repository.ts";
-import { FloorRepository } from "../../floor/floor.repository%20copy.ts";
-import { OfficeRepository } from "../../office/office.repository%20copy.ts";
-import { SeatRepository } from "../../seat/seat.repository%20copy.ts";
-import { SlotRepository } from "../../slots/slot.repository%20copy.ts";
-import { UserRepository } from "../../user/user.repository%20copy.ts";
+import { CompanyRepositoryAdapter } from "../../company/adapters/company-repository.adapter.ts";
+import { CompanyRepository } from "../../company/ports/company-repository.port.ts";
+import { FloorRepository } from "../../floor/floor.repository.ts";
+import { OfficeRepository } from "../../office/office.repository.ts";
+import { SeatRepository } from "../../seat/seat.repository.ts";
+import { SlotRepository } from "../../slots/slot.repository.ts";
+import { UserRepository } from "../../user/user.repository.ts";
 import { Logger, LoggerInterface } from "../observability/logger.ts";
 
 export enum DiKeys {
@@ -48,7 +49,7 @@ class DIContainer {
 
 export const diContainer = new DIContainer();
 
-const companyRepository = new CompanyRepository();
+const companyRepository = new CompanyRepositoryAdapter();
 const floorRepository = new FloorRepository();
 const officeRepository = new OfficeRepository();
 const seatRepository = new SeatRepository();

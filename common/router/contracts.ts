@@ -9,6 +9,7 @@ export enum RouterMethodsRegister {
 }
 
 export type RouterInterface = {
+  controller: string;
   method: RouterMethodsRegister;
   path: string;
   handler: (ctx: Context) => Promise<unknown> | void;

@@ -20,7 +20,7 @@ export class Logger implements LoggerInterface {
       handlers: {
         default: new log.ConsoleHandler("DEBUG", {
           formatter: log.formatters.jsonFormatter,
-          useColors: false,
+          useColors: true,
         }),
       },
     });

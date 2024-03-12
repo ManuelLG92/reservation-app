@@ -6,19 +6,22 @@ export class GenericCrud<Out, T extends AggregateRoot<Out>> {
     this.records = new Map();
   }
 
-  upsert(value: T): void {
+  upsert(value: T): Promise<void> {
     this.records.set(value.id, value);
+    return Promise.resolve();
   }
 
-  findById(id: string): Out {
+  findById(id: string): Promise<Out> {
     const result = this.records.get(id);
     if (result) {
-      return result.toJson();
+      return Promise.resolve(result.toJson());
     }
     throw new Error(`${this.entity} with id ${id} not found`);
   }
 
-  findAll(): Out[] {
-    return [...this.records.values()].map((value) => value.toJson());
+  findAll(): Promise<Out[]> {
+    return Promise.resolve(
+      [...this.records.values()].map((value) => value.toJson()),
+    );
   }
 }

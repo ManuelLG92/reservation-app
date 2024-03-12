@@ -1,19 +1,22 @@
+import { getLogger } from "../../di-container/di-container.ts";
 import { routes } from "../index.ts";
-import { Context, Next, Router } from "oak";
+import { composeMiddleware, Router } from "oak";
 
+const logger = getLogger();
+const boundedName = "bound ";
 const registerRoutes = (router: Router) => {
   routes.forEach((route) => {
-    console.log(
-      `Path: /${route.path} - Method: ${route.method} - Controller: ${route.handler.constructor.name}`,
+    const handler = route.handler;
+    const handlerName = handler.name;
+    const formattedHandlerName = handlerName.startsWith(boundedName)
+      ? handlerName.substring(boundedName.length)
+      : handlerName;
+    const controller = `${route.controller}-${formattedHandlerName}`;
+    const data = composeMiddleware(route.middlewares ?? []);
+    router[route.method](`/${route.path}`, data, handler);
+    logger.info(
+      `[${route.method.toUpperCase()}]/${route.path} - Controller: ${controller}`,
     );
-    router[route.method](`/${route.path}`, async (ctx: Context, next: Next) => {
-      return [
-        ...(route.middlewares?.length
-          ? Object.values(route.middlewares).map((it) => it(ctx, next))
-          : []),
-        await route.handler(ctx),
-      ];
-    });
   });
 };
 

@@ -1,5 +1,5 @@
 import { diContainer, DiKeys } from "./common/di-container/di-container.ts";
-import { companyFixture } from "./company/company.fixtures.ts";
+import { companyFixture } from "./company/__tests__/company.fixtures.ts";
 import { floorFixture } from "./floor/floor.fixture.ts";
 import { officeFixture } from "./office/office.fixture.ts";
 import { seatFixture } from "./seat/seat.fixture.ts";
