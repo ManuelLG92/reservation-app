@@ -2,6 +2,7 @@ import { diContainer, DiKeys } from "./common/di-container/di-container.ts";
 import { companyFixture } from "./company/__tests__/company.fixtures.ts";
 import { floorFixture } from "./floor/floor.fixture.ts";
 import { officeFixture } from "./office/office.fixture.ts";
+import { Seat } from "./seat/domain/seat.entity.ts";
 import { seatFixture } from "./seat/seat.fixture.ts";
 import { slotFixture } from "./slots/slot.fixture.ts";
 import { userFixture } from "./user/user.fixture.ts";
@@ -12,17 +13,27 @@ export const mainFixtures = () => {
   const officeInitial = officeFixture();
   const floorInitial = floorFixture();
   const seatInitial = seatFixture();
+
+  const seatRepository = diContainer.resolve(
+    DiKeys.SeatRepository,
+  );
+  const seats: Seat[] = [];
+  const seatsToCreate = 10;
+
+  for (let index = 0; index < seatsToCreate; index++) {
+    const seatCreated = seatFixture(`seat-${index + 1}`);
+    seatRepository.upsert(seatInitial);
+    seats.push(seatCreated);
+  }
   const slotInitial = slotFixture({ user: userValue });
   const slotRepository = diContainer.resolve(
     DiKeys.SlotRepository,
   );
   slotRepository.upsert(slotInitial);
   seatInitial.addDraftSlot(slotInitial).confirmSlot(slotInitial.id);
-  const seatRepository = diContainer.resolve(
-    DiKeys.SeatRepository,
-  );
+
   seatRepository.upsert(seatInitial);
-  floorInitial.addSeat(seatInitial);
+  floorInitial.addBulkSeats(seats);
   const floorRepository = diContainer.resolve(
     DiKeys.FloorRepository,
   );
@@ -38,4 +49,10 @@ export const mainFixtures = () => {
     DiKeys.CompanyRepository,
   );
   companyRepository.upsert(companyValue);
+
+  const userRepository = diContainer.resolve(
+    DiKeys.UserRepository,
+  );
+
+  userRepository.upsert(userValue);
 };

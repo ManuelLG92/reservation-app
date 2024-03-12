@@ -9,7 +9,7 @@ export interface UserProps extends AggregateRootProps {
 export class User extends AggregateRoot<UserProps> {
   #name: string;
   constructor(name: string) {
-    super();
+    super("a6c55ce7-a78b-46fa-a0df-7b5007d0e385");
     this.#name = name;
   }
 

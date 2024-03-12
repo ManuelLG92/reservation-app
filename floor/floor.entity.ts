@@ -2,7 +2,7 @@ import {
   AggregateRoot,
   AggregateRootProps,
 } from "../common/entity/aggregate-root.entity.ts";
-import { Seat, SeatOutputProps } from "../seat/seat.entity.ts";
+import { Seat, SeatOutputProps } from "../seat/domain/seat.entity.ts";
 export interface FloorProps extends AggregateRootProps {
   identifier: string;
   seats: Seat[];
@@ -39,6 +39,12 @@ export class Floor extends AggregateRoot<FloorPropsOut> {
       );
     }
     this.seats.push(newSeat);
+  }
+
+  addBulkSeats(seats: Seat[]) {
+    seats.forEach((seat) => {
+      this.addSeat(seat);
+    });
   }
   toJson(): FloorPropsOut {
     return {

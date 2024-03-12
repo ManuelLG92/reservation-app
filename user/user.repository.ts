@@ -1,8 +1,8 @@
 import { GenericCrud } from "../common/persistence/generic-crud.ts";
-import { User, UserProps } from "./user.entity.ts";
+import { User } from "./user.entity.ts";
 
-export class UserRepository extends GenericCrud<UserProps, User> {
+export class UserRepository extends GenericCrud<User> {
   constructor() {
-    super(User.constructor.name);
+    super(User.prototype.constructor.name);
   }
 }

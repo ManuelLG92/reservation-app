@@ -18,8 +18,8 @@ export abstract class AggregateRoot<ToJSON> {
   protected readonly _id: string;
   protected readonly _createdAt: Date;
   protected _updatedAt?: Date;
-  constructor() {
-    this._id = crypto.randomUUID();
+  constructor(id?: string) {
+    this._id = id ?? crypto.randomUUID();
     this._createdAt = new Date();
   }
 

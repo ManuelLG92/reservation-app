@@ -1,9 +1,11 @@
-import { CompanyRepositoryAdapter } from "../../company/adapters/company-repository.adapter.ts";
-import { CompanyRepository } from "../../company/ports/company-repository.port.ts";
+import { CompanyRepositoryAdapter } from "../../company/adapters/company.repository.adapter.ts";
+import { CompanyRepository } from "../../company/ports/company.repository.port.ts";
 import { FloorRepository } from "../../floor/floor.repository.ts";
 import { OfficeRepository } from "../../office/office.repository.ts";
-import { SeatRepository } from "../../seat/seat.repository.ts";
-import { SlotRepository } from "../../slots/slot.repository.ts";
+import { SeatRepositoryAdapter } from "../../seat/adapter/seat.repository.adapter.ts";
+import { SeatRepository } from "../../seat/ports/seat.repository.port.ts";
+import { SlotRepository } from "../../slots/ports/slot.repository.port.ts";
+import { SlotRepositoryAdapter } from "../../slots/adapters/slot.repository.adapter.ts";
 import { UserRepository } from "../../user/user.repository.ts";
 import { Logger, LoggerInterface } from "../observability/logger.ts";
 
@@ -52,8 +54,8 @@ export const diContainer = new DIContainer();
 const companyRepository = new CompanyRepositoryAdapter();
 const floorRepository = new FloorRepository();
 const officeRepository = new OfficeRepository();
-const seatRepository = new SeatRepository();
-const slotRepository = new SlotRepository();
+const seatRepository = new SeatRepositoryAdapter();
+const slotRepository = new SlotRepositoryAdapter();
 const userRepository = new UserRepository();
 const logger = new Logger();
 
