@@ -1,8 +1,8 @@
 import {
   AggregateRoot,
   AggregateRootProps,
-} from "../common/entity/aggregate-root.entity.ts";
-import { Seat, SeatOutputProps } from "../seat/domain/seat.entity.ts";
+} from "src/common/domain/entity/aggregate-root.entity.ts";
+import { Seat, SeatOutputProps } from "src/seat/domain/seat.entity.ts";
 export interface FloorProps extends AggregateRootProps {
   identifier: string;
   seats: Seat[];

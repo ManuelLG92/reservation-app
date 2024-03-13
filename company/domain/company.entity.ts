@@ -1,8 +1,8 @@
 import {
   AggregateRoot,
   AggregateRootProps,
-} from "../../common/entity/aggregate-root.entity.ts";
-import { Office, OfficePropsOut } from "../../office/office.entity.ts";
+} from "src/common/domain/entity/aggregate-root.entity.ts";
+import { Office, OfficePropsOut } from "src/office/office.entity.ts";
 
 export interface CompanyProps extends AggregateRootProps {
   offices: Office[];

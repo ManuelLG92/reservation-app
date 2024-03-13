@@ -1,5 +1,5 @@
-import { userFixture } from "../user/user.fixture.ts";
-import { Slot, SlotInputProps } from "./domain/slot.entity.ts";
+import { userFixture } from "src/user/user.fixture.ts";
+import { Slot, SlotInputProps } from "src/slots/domain/slot.entity.ts";
 
 export const slotFixture = (
   { startAt: startAtValue, endAt: endAtValue, user }: Partial<SlotInputProps> =

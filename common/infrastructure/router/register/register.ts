@@ -1,6 +1,6 @@
-import { getLogger } from "../../di-container/di-container.ts";
-import { routes } from "../index.ts";
 import { composeMiddleware, Router } from "oak";
+import { getLogger } from "src/common/di-container/di-container.ts";
+import { routes } from "src/common/infrastructure/router/index.ts";
 
 const logger = getLogger();
 const boundedName = "bound ";

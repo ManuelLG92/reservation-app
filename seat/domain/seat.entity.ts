@@ -1,8 +1,8 @@
 import {
   AggregateRoot,
   AggregateRootProps,
-} from "../../common/entity/aggregate-root.entity.ts";
-import { Slot, SlotOutputProps } from "../../slots/domain/slot.entity.ts";
+} from "src/common/domain/entity/aggregate-root.entity.ts";
+import { Slot, SlotOutputProps } from "src/slots/domain/slot.entity.ts";
 
 // implement in redis with TTL and subscribe to it
 const cache: Record<string, Slot> = {};

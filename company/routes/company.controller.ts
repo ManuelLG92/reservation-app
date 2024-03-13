@@ -1,6 +1,6 @@
 import { Context } from "oak";
-import { LoggerInterface } from "../../common/observability/logger.ts";
-import { CompanyRepository } from "../ports/company.repository.port.ts";
+import { LoggerInterface } from "src/common/observability/logger.ts";
+import { CompanyRepository } from "src/company/ports/company.repository.port.ts";
 
 export class CompanyController {
   constructor(

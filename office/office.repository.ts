@@ -1,5 +1,5 @@
-import { GenericCrud } from "../common/persistence/generic-crud.ts";
-import { Office } from "./office.entity.ts";
+import { GenericCrud } from "src/common/infrastructure/persistence/generic-crud.ts";
+import { Office } from "src/office/office.entity.ts";
 
 export class OfficeRepository extends GenericCrud<Office> {
   constructor() {

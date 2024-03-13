@@ -1,6 +1,6 @@
-import { GenericCrud } from "../../common/persistence/generic-crud.ts";
-import { SeatRepository } from "../ports/seat.repository.port.ts";
-import { Seat } from "../domain/seat.entity.ts";
+import { GenericCrud } from "src/common/infrastructure/persistence/generic-crud.ts";
+import { SeatRepository } from "src/seat/ports/seat.repository.port.ts";
+import { Seat } from "src/seat/domain/seat.entity.ts";
 
 export class SeatRepositoryAdapter extends GenericCrud<Seat>
   implements SeatRepository {

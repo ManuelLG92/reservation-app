@@ -1,4 +1,4 @@
-import { AggregateRoot } from "../entity/aggregate-root.entity.ts";
+import { AggregateRoot } from "src/common/domain/entity/aggregate-root.entity.ts";
 
 export class GenericCrud<T extends AggregateRoot<unknown>> {
   protected readonly records: Map<string, T>;

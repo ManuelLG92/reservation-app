@@ -1,7 +1,7 @@
 import {
   AggregateRoot,
   AggregateRootProps,
-} from "../common/entity/aggregate-root.entity.ts";
+} from "src/common/domain/entity/aggregate-root.entity.ts";
 export interface UserProps extends AggregateRootProps {
   name: string;
 }

@@ -1,8 +1,8 @@
 import { Application, isHttpError, Router } from "oak";
-import { mainFixtures } from "./fixtures.main.ts";
-import { getLogger } from "./common/di-container/di-container.ts";
-import registerRoutes from "./common/router/register/register.ts";
-import { ValidationError } from "./common/validator/validator.ts";
+import { mainFixtures } from "src/fixtures.main.ts";
+import { getLogger } from "src/common/di-container/di-container.ts";
+import { ValidationError } from "src/common/infrastructure/validator/validator.ts";
+import registerRoutes from "src/common/infrastructure/router/register/register.ts";
 
 const app = new Application();
 mainFixtures();

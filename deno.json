@@ -1,5 +1,6 @@
 {
   "imports": {
+    "src/": "./",
     "log": "https://deno.land/std@0.219.0/log/mod.ts",
     "test": "https://deno.land/std@0.219.0/testing/bdd.ts",
     "asserts": "https://deno.land/std@0.219.0/assert/mod.ts",

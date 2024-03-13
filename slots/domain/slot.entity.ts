@@ -1,8 +1,8 @@
 import {
   AggregateRoot,
   AggregateRootProps,
-} from "../../common/entity/aggregate-root.entity.ts";
-import { User } from "../../user/user.entity.ts";
+} from "src/common/domain/entity/aggregate-root.entity.ts";
+import { User } from "src/user/user.entity.ts";
 
 export interface SlotInputProps {
   startAt: Date;
