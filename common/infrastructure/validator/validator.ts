@@ -9,11 +9,11 @@ export class ValidationError extends Error {
     this.details = this.details ?? {};
   }
 }
-export const validate = <T extends z.Schema>(
+export const validate = async <T extends z.Schema>(
   schema: T,
-  data: Record<string, unknown>,
-): z.infer<T> => {
-  const result = schema.safeParse(data);
+  data: Record<string, unknown> | string | number,
+): Promise<z.infer<T>> => {
+  const result = await schema.safeParseAsync(data);
   if (!result.success) {
     const errors = result.error.errors.reduce((acc, current) => {
       const errorsFormatted = { [current.path.join(".")]: current.message };

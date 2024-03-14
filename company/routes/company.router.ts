@@ -1,4 +1,4 @@
-import { Context, Next } from "oak";
+import { Context, Next } from "hono";
 import {
   diContainer,
   DiKeys,
@@ -22,16 +22,16 @@ export const companyRoutes: RouterInterface[] = [
     handler: controller.findAll,
     middlewares: [
       async (ctx: Context, next: Next) => {
-        console.log("first midds", ctx.request.url);
-        ctx.response.headers.set("first", "truse");
-        Promise.resolve(next());
+        console.log("first midds", ctx.req.url);
+        ctx.header("first", "truse");
+        await next();
       },
       async (ctx: Context, next: Next) => {
         console.log(
           "second midd. from previous mid ss",
-          ctx.response.headers.get("first"),
+          ctx.res.headers.get("first"),
         );
-        Promise.resolve(next());
+        await next();
       },
     ],
   },

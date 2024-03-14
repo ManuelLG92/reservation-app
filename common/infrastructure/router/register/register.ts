@@ -1,10 +1,10 @@
-import { composeMiddleware, Router } from "oak";
+import { Hono } from "hono";
 import { getLogger } from "src/common/di-container/di-container.ts";
 import { routes } from "src/common/infrastructure/router/index.ts";
 
 const logger = getLogger();
 const boundedName = "bound ";
-const registerRoutes = (router: Router) => {
+const registerRoutes = (router: Hono) => {
   routes.forEach((route) => {
     const handler = route.handler;
     const handlerName = handler.name;
@@ -12,8 +12,10 @@ const registerRoutes = (router: Router) => {
       ? handlerName.substring(boundedName.length)
       : handlerName;
     const controller = `${route.controller}-${formattedHandlerName}`;
-    const data = composeMiddleware(route.middlewares ?? []);
-    router[route.method](`/${route.path}`, data, handler);
+    router.use(`/${route.path}`, ...route.middlewares ?? []);
+    router[route.method](`/${route.path}`, async (ctx) => {
+      return handler(ctx);
+    });
     logger.info(
       `[${route.method.toUpperCase()}]/${route.path} - Controller: ${controller}`,
     );

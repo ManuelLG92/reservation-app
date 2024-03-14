@@ -7,9 +7,10 @@ import {
   RouterInterface,
   RouterMethodsRegister,
 } from "src/common/infrastructure/router/contracts.ts";
-import { BookSeatUseCase } from "src/seat/use-cases/book-seats-use-case.ts";
 import { BookSeatController } from "src/seat/router/controller/book-seats/book-seats.controller.ts";
-import { FindSeatsUseCase } from "src/seat/router/controller/find-seats.controller.ts";
+import { FindSeatsController } from "src/seat/router/controller/find-seats/find-seats.controller.ts";
+import { BookSeatUseCase } from "src/seat/use-cases/book-seats-use-case.ts";
+import { FindSeatsUseCase } from "src/seat/use-cases/find-seats-use-case.ts";
 
 const logger = getLogger();
 const seatRepository = diContainer.resolve(DiKeys.SeatRepository);
@@ -21,18 +22,32 @@ const bookSeatUseCase = new BookSeatUseCase(
   userRepository,
   slotRepository,
 );
-const controller = new BookSeatController(
+const bookSeatController = new BookSeatController(
   logger,
   bookSeatUseCase,
 );
 
-const findSeatsController = new FindSeatsUseCase(logger, slotRepository);
+const findSeatsUseCase = new FindSeatsUseCase(logger, seatRepository);
+const findSeatsController = new FindSeatsController(logger, findSeatsUseCase);
+
+export const seatsRoutes = {
+  bookSeat: "seats/bookings",
+  findById: "seats/:id",
+} as const;
+
 export const seatRoutes: RouterInterface[] = [
   {
     method: RouterMethodsRegister.post,
-    path: "seats/bookings",
+    path: seatsRoutes.bookSeat,
     controller: BookSeatController.prototype.constructor.name,
-    handler: controller.bookDraftSlotHandler,
+    handler: bookSeatController.bookDraftSlotHandler,
+    middlewares: [],
+  },
+  {
+    method: RouterMethodsRegister.get,
+    path: seatsRoutes.findById,
+    controller: FindSeatsController.prototype.constructor.name,
+    handler: findSeatsController.findById,
     middlewares: [],
   },
 ];

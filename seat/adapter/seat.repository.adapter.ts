@@ -5,7 +5,7 @@ import { Seat } from "src/seat/domain/seat.entity.ts";
 export class SeatRepositoryAdapter extends GenericCrud<Seat>
   implements SeatRepository {
   constructor() {
-    super(Seat.constructor.name);
+    super(Seat.prototype.constructor.name);
   }
   findByPosition(number: number) {
     const seat = [...this.records.values()].find((it) =>

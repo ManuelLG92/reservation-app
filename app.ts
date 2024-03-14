@@ -1,10 +1,10 @@
-import { Application, isHttpError, Router } from "oak";
+import { Hono } from "hono";
 import { mainFixtures } from "src/fixtures.main.ts";
 import { getLogger } from "src/common/di-container/di-container.ts";
 import { ValidationError } from "src/common/infrastructure/validator/validator.ts";
 import registerRoutes from "src/common/infrastructure/router/register/register.ts";
 
-const app = new Application();
+const app = new Hono();
 mainFixtures();
 const logger = getLogger();
 
@@ -14,8 +14,7 @@ app.use(async (ctx, next) => {
   try {
     await next();
   } finally {
-    console.log("after end");
-    ctx.response.headers.set("X-Response-Time", `${Date.now() - start}ms`);
+    ctx.header("X-Response-Time", `${Date.now() - start}ms`);
   }
 });
 
@@ -24,32 +23,26 @@ app.use(async (ctx, next) => {
   const start = Date.now();
   try {
     await next();
-    ctx.response.headers.set("X-Response-Time", `${Date.now() - start}ms`);
+    ctx.header("X-Response-Time", `${Date.now() - start}ms`);
   } catch (error) {
     console.log("Something was wrong. Cause ", (error as Error).message);
-    ctx.response.headers.set("X-Response-Time", `${Date.now() - start}ms`);
-    if (isHttpError(error)) {
-      ctx.response.status = error.status;
-    } else {
-      ctx.response.status = error instanceof ValidationError ? 400 : 500;
-    }
-    ctx.response.body = {
+    ctx.header("X-Response-Time", `${Date.now() - start}ms`);
+
+    ctx.status(error instanceof ValidationError ? 400 : 500);
+    return ctx.json({
       error: error.message,
       ...(error instanceof ValidationError && { details: error.details ?? {} }),
-    };
-    ctx.response.type = "json";
+    });
   }
 });
 
 // Logger
 app.use(async (ctx, next) => {
   await next();
-  const rt = ctx.response.headers.get("X-Response-Time");
-  logger.info(`${ctx.request.method} ${ctx.request.url} - ${rt}`);
+  const rt = ctx.req.header("X-Response-Time");
+  logger.info(`${ctx.req.method} ${ctx.req.url} - ${rt}`);
 });
 
-const router = new Router();
-registerRoutes(router);
-app.use(router.routes());
+registerRoutes(app);
 
-await app.listen({ port: 8123 });
+Deno.serve({ port: 8123 }, app.fetch);

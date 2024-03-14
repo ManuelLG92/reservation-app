@@ -48,6 +48,7 @@ export class Seat extends AggregateRoot<SeatOutputProps> {
     this.validateSlot(slotRequest);
     slotRequest.draftState();
     // needed to perform updated when expired in cache(redis)
+
     cache[slotRequest.id] = slotRequest;
     this.#slots.set(slotRequest.id, slotRequest);
     return this;

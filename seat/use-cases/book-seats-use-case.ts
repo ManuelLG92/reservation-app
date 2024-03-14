@@ -19,10 +19,12 @@ export class BookSeatUseCase {
       this.seatRepository.findByPosition(seatId),
       this.userRepository.findById(userId),
     ]);
+    this.logger.info(`seat ID booked in draft status with id: ${seat.id}`);
     const slot = new Slot({ startAt, endAt, user });
     seat.addDraftSlot(slot);
     await this.slotRepository.upsert(slot);
     this.logger.info(`Sloot booked in draft status with id: ${slot.id}`);
+    await this.seatRepository.upsert(seat)
     return this.bookMapper(slot);
   }
 

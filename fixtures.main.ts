@@ -12,7 +12,7 @@ export const mainFixtures = () => {
   const companyValue = companyFixture();
   const officeInitial = officeFixture();
   const floorInitial = floorFixture();
-  const seatInitial = seatFixture();
+  const seatInitial = seatFixture("seat-100");
 
   const seatRepository = diContainer.resolve(
     DiKeys.SeatRepository,
@@ -20,9 +20,11 @@ export const mainFixtures = () => {
   const seats: Seat[] = [];
   const seatsToCreate = 10;
 
+  seatRepository.upsert(seatInitial);
+
   for (let index = 0; index < seatsToCreate; index++) {
     const seatCreated = seatFixture(`seat-${index + 1}`);
-    seatRepository.upsert(seatInitial);
+    seatRepository.upsert(seatCreated);
     seats.push(seatCreated);
   }
   const slotInitial = slotFixture({ user: userValue });

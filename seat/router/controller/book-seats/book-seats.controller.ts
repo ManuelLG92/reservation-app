@@ -1,8 +1,8 @@
-import { Context } from "oak";
 import { BookSeatUseCase } from "src/seat/use-cases/book-seats-use-case.ts";
 import { LoggerInterface } from "src/common/observability/logger.ts";
 import { bookSeatSlotSchema } from "src/seat/router/controller/book-seats/book-seats.schema.ts";
 import { validate } from "src/common/infrastructure/validator/validator.ts";
+import { Context } from "hono";
 
 export class BookSeatController {
   constructor(
@@ -14,13 +14,13 @@ export class BookSeatController {
 
   async bookDraftSlotHandler(ctx: Context) {
     this.logger.info("Booking a slot");
-    const body = await ctx.request.body.json();
-    const dto = validate(
+    const body = await ctx.req.json();
+    this.logger.info(`Payload ${JSON.stringify(body)}`)
+    const dto = await validate(
       bookSeatSlotSchema,
       body,
     );
     const response = await this.useCase.bookSlotDraft(dto);
-    ctx.response.body = { slot_id: response.slotId, status: response.state };
-    ctx.response.status = 200;
+    return ctx.json({ slot_id: response.slotId, status: response.state }, 200);
   }
 }
