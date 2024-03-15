@@ -1,14 +1,6 @@
 import { z } from "zod";
+import { ValidationError } from "../../errors/validation-error.ts";
 
-export class ValidationError extends Error {
-  constructor(
-    message: string,
-    public readonly details?: Record<string, unknown>,
-  ) {
-    super(message);
-    this.details = this.details ?? {};
-  }
-}
 export const validate = async <T extends z.Schema>(
   schema: T,
   data: Record<string, unknown> | string | number,

@@ -19,6 +19,6 @@ export class FindSeatsController {
 
     const result = await this.useCase.findById(id);
 
-    return ctx.json({...result}, 200)
+    return ctx.json({ ...result }, 200);
   }
 }

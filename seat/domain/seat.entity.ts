@@ -3,6 +3,8 @@ import {
   AggregateRootProps,
 } from "src/common/domain/entity/aggregate-root.entity.ts";
 import { Slot, SlotOutputProps } from "src/slots/domain/slot.entity.ts";
+import { NotFoundError } from "src/common/errors/not-found-error.ts";
+import { BadRequestError } from "src/common/errors/bad-request-error.ts";
 
 // implement in redis with TTL and subscribe to it
 const cache: Record<string, Slot> = {};
@@ -38,7 +40,7 @@ export class Seat extends AggregateRoot<SeatOutputProps> {
       startAt < slot.endAt && endAt > slot.startAt
     );
     if (hasOverlappingSlot) {
-      throw new Error(
+      throw new BadRequestError(
         "Opps. Spot already booked. Choose another seat or change the timeframe",
       );
     }
@@ -47,8 +49,8 @@ export class Seat extends AggregateRoot<SeatOutputProps> {
   addDraftSlot(slotRequest: Slot) {
     this.validateSlot(slotRequest);
     slotRequest.draftState();
-    // needed to perform updated when expired in cache(redis)
 
+    // needed to perform updates when expired in cache(eg. redis)
     cache[slotRequest.id] = slotRequest;
     this.#slots.set(slotRequest.id, slotRequest);
     return this;
@@ -57,7 +59,7 @@ export class Seat extends AggregateRoot<SeatOutputProps> {
   confirmSlot(id: string) {
     const slot = this.#slots.get(id);
     if (!slot) {
-      throw new Error(
+      throw new NotFoundError(
         `Opps. Spot ${slot} doesn't exist`,
       );
     }
@@ -77,7 +79,7 @@ export class Seat extends AggregateRoot<SeatOutputProps> {
   deleteSlotById(id: string) {
     const isDeleted = this.#slots.delete(id);
     if (!isDeleted) {
-      throw new Error(`Slot ${id} not exists`);
+      throw new NotFoundError(`Slot ${id} not exists`);
     }
   }
 

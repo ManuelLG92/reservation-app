@@ -3,6 +3,7 @@ import {
   AggregateRootProps,
 } from "src/common/domain/entity/aggregate-root.entity.ts";
 import { Floor, FloorPropsOut } from "src/floor/floor.entity.ts";
+import { BadRequestError } from "src/common/errors/bad-request-error.ts";
 
 export interface OfficeProps extends AggregateRootProps {
   name: string;
@@ -35,7 +36,7 @@ export class Office extends AggregateRoot<OfficePropsOut> {
       floor.identifier.toLowerCase() === newFloorIdentifier.toLowerCase()
     );
     if (hasIdenfitierOverlap) {
-      throw new Error(
+      throw new BadRequestError(
         `Floor identier should be unique. ${newFloorIdentifier} is already taken`,
       );
     }

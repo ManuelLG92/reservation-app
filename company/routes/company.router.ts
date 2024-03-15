@@ -3,11 +3,11 @@ import {
   diContainer,
   DiKeys,
   getLogger,
-} from "../../common/di-container/di-container.ts";
+} from "src/common/di-container/di-container.ts";
 import {
   RouterInterface,
   RouterMethodsRegister,
-} from "../../common/infrastructure/router/contracts.ts";
+} from "src/common/infrastructure/router/contracts.ts";
 import { CompanyController } from "./company.controller.ts";
 
 const companyRepository = diContainer.resolve(DiKeys.CompanyRepository);

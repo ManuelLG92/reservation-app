@@ -8,7 +8,9 @@ import { SlotRepository } from "../../slots/ports/slot.repository.port.ts";
 import { SlotRepositoryAdapter } from "../../slots/adapters/slot.repository.adapter.ts";
 import { UserRepository } from "../../user/user.repository.ts";
 import { Logger, LoggerInterface } from "../observability/logger.ts";
-
+import { MyMongoClient } from "src/common/infrastructure/persistence/mongo/my-mongo-client.ts";
+import { MyMongoClientInterface } from "src/common/infrastructure/persistence/mongo/my-mongo-client.interface.ts";
+import { load } from "dotenv";
 export enum DiKeys {
   CompanyRepository = "CompanyRepository",
   FloorRepository = "FloorRepository",
@@ -17,6 +19,7 @@ export enum DiKeys {
   SlotRepository = "SlotsRepository",
   UserRepository = "UserRepository",
   Logger = "Logger",
+  MongoDb = "MongoDb",
 }
 
 type TypeMatching = {
@@ -27,6 +30,7 @@ type TypeMatching = {
   [DiKeys.SlotRepository]: SlotRepository;
   [DiKeys.UserRepository]: UserRepository;
   [DiKeys.Logger]: LoggerInterface;
+  [DiKeys.MongoDb]: MyMongoClientInterface;
 };
 class DIContainer {
   private dependencies: Partial<Record<DiKeys, unknown>> = {};
@@ -50,21 +54,30 @@ class DIContainer {
 }
 
 export const diContainer = new DIContainer();
-
-const companyRepository = new CompanyRepositoryAdapter();
-const floorRepository = new FloorRepository();
-const officeRepository = new OfficeRepository();
-const seatRepository = new SeatRepositoryAdapter();
-const slotRepository = new SlotRepositoryAdapter();
-const userRepository = new UserRepository();
 const logger = new Logger();
 
+diContainer.register(DiKeys.Logger, logger);
+
+export const getLogger = () => diContainer.resolve(DiKeys.Logger);
+
+console.log("here");
+const pairs = await load();
+
+const connectionUrl = pairs["MONGO_DB_CONNECTION_URL"];
+const mongodb = new MyMongoClient({ logger, url: connectionUrl });
+diContainer.register(DiKeys.MongoDb, mongodb);
+const db = mongodb.getDb();
+const companyRepository = new CompanyRepositoryAdapter(
+  db.collection("companies"),
+);
+const floorRepository = new FloorRepository(db.collection("floors"));
+const officeRepository = new OfficeRepository(db.collection("offices"));
+const seatRepository = new SeatRepositoryAdapter(db.collection("seats"));
+const slotRepository = new SlotRepositoryAdapter(db.collection("slots"));
+const userRepository = new UserRepository(db.collection("users"));
 diContainer.register(DiKeys.CompanyRepository, companyRepository);
 diContainer.register(DiKeys.FloorRepository, floorRepository);
 diContainer.register(DiKeys.OfficeRepository, officeRepository);
 diContainer.register(DiKeys.SeatRepository, seatRepository);
 diContainer.register(DiKeys.SlotRepository, slotRepository);
 diContainer.register(DiKeys.UserRepository, userRepository);
-diContainer.register(DiKeys.Logger, logger);
-
-export const getLogger = () => diContainer.resolve(DiKeys.Logger);

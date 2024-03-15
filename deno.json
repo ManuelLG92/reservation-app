@@ -7,7 +7,10 @@
     "mock": "https://deno.land/std@0.219.0/testing/mock.ts",
     "zod": "https://deno.land/x/zod@v3.22.2/mod.ts",
     "yaml": "https://deno.land/x/yaml@v2.3.4/mod.ts",
-    "hono": "https://deno.land/x/hono@v4.1.0/mod.ts"
+    "hono": "https://deno.land/x/hono@v4.1.0/mod.ts",
+    "http-status": "https://deno.land/x/hono@v4.1.0/utils/http-status.ts",
+    "mongo": "npm:mongodb@6.5.0",
+    "dotenv": "https://deno.land/std@0.220.1/dotenv/mod.ts"
   },
   "tasks": {
     "dev": "deno run --watch main.ts"

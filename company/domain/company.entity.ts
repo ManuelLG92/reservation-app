@@ -3,6 +3,7 @@ import {
   AggregateRootProps,
 } from "src/common/domain/entity/aggregate-root.entity.ts";
 import { Office, OfficePropsOut } from "src/office/office.entity.ts";
+import { BadRequestError } from "src/common/errors/bad-request-error.ts";
 
 export interface CompanyProps extends AggregateRootProps {
   offices: Office[];
@@ -34,7 +35,7 @@ export class Company extends AggregateRoot<CompanyPropsOut> {
       office.name.toLowerCase() === officeName.toLowerCase()
     );
     if (hasNameOverlap) {
-      throw new Error(
+      throw new BadRequestError(
         `Office names should be unique. ${officeName} is already taken`,
       );
     }

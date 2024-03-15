@@ -15,7 +15,7 @@ export class BookSeatController {
   async bookDraftSlotHandler(ctx: Context) {
     this.logger.info("Booking a slot");
     const body = await ctx.req.json();
-    this.logger.info(`Payload ${JSON.stringify(body)}`)
+    this.logger.info(`Payload ${JSON.stringify(body)}`);
     const dto = await validate(
       bookSeatSlotSchema,
       body,

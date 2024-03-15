@@ -3,6 +3,7 @@ import {
   AggregateRootProps,
 } from "src/common/domain/entity/aggregate-root.entity.ts";
 import { Seat, SeatOutputProps } from "src/seat/domain/seat.entity.ts";
+import { BadRequestError } from "src/common/errors/bad-request-error.ts";
 export interface FloorProps extends AggregateRootProps {
   identifier: string;
   seats: Seat[];
@@ -34,7 +35,7 @@ export class Floor extends AggregateRoot<FloorPropsOut> {
       seat.identifier === newIdentifier
     );
     if (hasOverlapIdentifier) {
-      throw new Error(
+      throw new BadRequestError(
         `Seast identifier should be unique. Identifier ${newIdentifier} already exists.`,
       );
     }

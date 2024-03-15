@@ -4,7 +4,7 @@ import { routes } from "src/common/infrastructure/router/index.ts";
 
 const logger = getLogger();
 const boundedName = "bound ";
-const registerRoutes = (router: Hono) => {
+export const registerRoutes = (router: Hono) => () => {
   routes.forEach((route) => {
     const handler = route.handler;
     const handlerName = handler.name;
@@ -14,12 +14,10 @@ const registerRoutes = (router: Hono) => {
     const controller = `${route.controller}-${formattedHandlerName}`;
     router.use(`/${route.path}`, ...route.middlewares ?? []);
     router[route.method](`/${route.path}`, async (ctx) => {
-      return handler(ctx);
+      return await handler(ctx);
     });
     logger.info(
       `[${route.method.toUpperCase()}]/${route.path} - Controller: ${controller}`,
     );
   });
 };
-
-export default registerRoutes;

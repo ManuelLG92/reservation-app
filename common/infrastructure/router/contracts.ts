@@ -12,7 +12,7 @@ export type RouterInterface = {
   controller: string;
   method: RouterMethodsRegister;
   path: string;
-  handler: (ctx: Context) => Promise<Response | void> | void;
+  handler: (ctx: Context) => Promise<Response | void>;
   middlewares?: Middlewares[];
 };
 

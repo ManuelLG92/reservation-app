@@ -1,0 +1,17 @@
+---
+version: '3.8'
+services:
+  deno_mongodb_container:
+    image: mongo:latest
+    container_name: deno_mongodb_container
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: admin
+      MONGO_INITDB_DATABASE: reservation_app
+    ports:
+      - "27017:27017"
+    volumes:
+      - deno_mongodb_container:/data/db
+
+volumes:
+  deno_mongodb_container:

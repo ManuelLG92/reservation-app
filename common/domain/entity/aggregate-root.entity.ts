@@ -36,4 +36,8 @@ export abstract class AggregateRoot<ToJSON> {
   }
 
   abstract toJson(): ToJSON;
+
+  protected fromObject(data: Record<string, unknown>) {
+    return { ...data };
+  }
 }

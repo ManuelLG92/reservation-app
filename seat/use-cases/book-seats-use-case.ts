@@ -24,7 +24,7 @@ export class BookSeatUseCase {
     seat.addDraftSlot(slot);
     await this.slotRepository.upsert(slot);
     this.logger.info(`Sloot booked in draft status with id: ${slot.id}`);
-    await this.seatRepository.upsert(seat)
+    await this.seatRepository.upsert(seat);
     return this.bookMapper(slot);
   }
 
