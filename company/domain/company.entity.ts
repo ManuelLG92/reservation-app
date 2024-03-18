@@ -1,5 +1,6 @@
 import {
   AggregateRoot,
+  AggregateRootOutProps,
   AggregateRootProps,
 } from "src/common/domain/entity/aggregate-root.entity.ts";
 import { Office, OfficePropsOut } from "src/office/office.entity.ts";
@@ -9,16 +10,23 @@ export interface CompanyProps extends AggregateRootProps {
   offices: Office[];
   name: string;
 }
-export interface CompanyPropsOut extends AggregateRootProps {
+export interface CompanyPropsOut extends AggregateRootOutProps {
   offices: OfficePropsOut[];
   name: string;
 }
-export class Company extends AggregateRoot<CompanyPropsOut> {
+
+export interface CompanyToPersistence extends AggregateRootOutProps {
+  offices: string[];
+  name: string;
+}
+
+export class Company
+  extends AggregateRoot<CompanyPropsOut, CompanyToPersistence> {
   #offices: Office[];
   #name: string;
-  constructor(name: string) {
-    super();
-    this.#offices = [];
+  constructor({ name, offices, ...father }: CompanyProps) {
+    super({ ...father });
+    this.#offices = offices;
     this.#name = name;
   }
 
@@ -54,5 +62,20 @@ export class Company extends AggregateRoot<CompanyPropsOut> {
       name: this.name,
       offices: this.#offices.map((it) => it.toJson()),
     };
+  }
+  toPersistance() {
+    return {
+      ...this.aggregateRootPrimitives(),
+      name: this.name,
+      offices: this.#offices.map((it) => it.id),
+    };
+  }
+
+  static fromPrimitives({ name, offices, ...rest }: CompanyPropsOut) {
+    return new Company({
+      ...AggregateRoot.convertOutputToInput(rest),
+      name,
+      offices: Office.fromPrimitiveCollection(offices),
+    });
   }
 }

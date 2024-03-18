@@ -6,6 +6,7 @@ import { BaseError } from "src/common/errors/base-error.ts";
 
 const app = new Hono();
 
+// await mainFixtures()
 const logger = getLogger();
 
 // Timing

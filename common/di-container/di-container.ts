@@ -11,6 +11,7 @@ import { Logger, LoggerInterface } from "../observability/logger.ts";
 import { MyMongoClient } from "src/common/infrastructure/persistence/mongo/my-mongo-client.ts";
 import { MyMongoClientInterface } from "src/common/infrastructure/persistence/mongo/my-mongo-client.interface.ts";
 import { load } from "dotenv";
+import { initMongoose } from "src/common/infrastructure/persistence/mongo/mongoose-schemas.ts";
 export enum DiKeys {
   CompanyRepository = "CompanyRepository",
   FloorRepository = "FloorRepository",
@@ -64,6 +65,7 @@ console.log("here");
 const pairs = await load();
 
 const connectionUrl = pairs["MONGO_DB_CONNECTION_URL"];
+await initMongoose(connectionUrl);
 const mongodb = new MyMongoClient({ logger, url: connectionUrl });
 diContainer.register(DiKeys.MongoDb, mongodb);
 const db = mongodb.getDb();

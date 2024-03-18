@@ -1,21 +1,34 @@
 import {
   AggregateRoot,
+  AggregateRootOutProps,
   AggregateRootProps,
 } from "src/common/domain/entity/aggregate-root.entity.ts";
 import { User } from "src/user/user.entity.ts";
 import { BadRequestError } from "src/common/errors/bad-request-error.ts";
 
-export interface SlotInputProps {
+export enum SlotStates {
+  draft = "draft",
+  confirmed = "confirmed",
+}
+
+export interface SlotInputProps extends AggregateRootProps {
   startAt: Date;
   endAt: Date;
   user: User;
+  state?: SlotStates;
 }
 
-export interface SlotOutputProps extends AggregateRootProps {
+export interface SlotOutputProps extends AggregateRootOutProps {
   startAt: string;
   endAt: string;
-  state: string;
+  state: SlotStates;
   user: User;
+}
+export interface SlotToPersistenceProps extends AggregateRootOutProps {
+  startAt: string;
+  endAt: string;
+  state: SlotStates;
+  user: string;
 }
 
 interface ValidateDates {
@@ -23,12 +36,8 @@ interface ValidateDates {
   context: string;
 }
 
-export enum SlotStates {
-  draft = "draft",
-  confirmed = "confirmed",
-}
-
-export class Slot extends AggregateRoot<SlotOutputProps> {
+export class Slot
+  extends AggregateRoot<SlotOutputProps, SlotToPersistenceProps> {
   private readonly minHour = 8;
   private readonly maxHour = 20;
   private readonly maxDays = 7;
@@ -36,13 +45,13 @@ export class Slot extends AggregateRoot<SlotOutputProps> {
   #startAt: Date;
   #endAt: Date;
   #user: User;
-  #state: string;
-  constructor({ startAt, endAt, user }: SlotInputProps) {
-    super();
+  #state: SlotStates;
+  constructor({ startAt, endAt, user, state, ...rest }: SlotInputProps) {
+    super(rest);
     this.#startAt = startAt;
     this.#endAt = endAt;
     this.#user = user;
-    this.#state = SlotStates.draft;
+    this.#state = state ?? SlotStates.draft;
     this.validate();
   }
 
@@ -56,7 +65,7 @@ export class Slot extends AggregateRoot<SlotOutputProps> {
   get user(): User {
     return this.#user;
   }
-  get state(): string {
+  get state(): SlotStates {
     return this.#state;
   }
 
@@ -79,30 +88,33 @@ export class Slot extends AggregateRoot<SlotOutputProps> {
     this.validateStartDateIsEarlierThanEndDate();
     this.validateDaysInterval();
     this.validateElapsedTime();
-    const values: ValidateDates[] = [{ value: this.startAt, context: "from" }, {
+    const values: ValidateDates[] = [{
+      value: this.startAt,
+      context: "startAt",
+    }, {
       value: this.endAt,
-      context: "to",
+      context: "endAt",
     }];
     for (const value of values) {
-      this.validateMinimunTime(value);
-      this.validateMaximunTime(value);
+      this.validateMinimumTime(value);
+      this.validateMaximumTime(value);
     }
   }
 
-  private validateMinimunTime({ value, context }: ValidateDates) {
+  private validateMinimumTime({ value, context }: ValidateDates) {
     const valueHour = value.getUTCHours();
     if (valueHour < this.minHour) {
       throw new BadRequestError(
-        `No valid hour for ${context}: Provided: ${valueHour} , minimun ${this.minHour}`,
+        `No valid hour for ${context}: Provided: ${valueHour} , minimum ${this.minHour}`,
       );
     }
   }
 
-  private validateMaximunTime({ value, context }: ValidateDates) {
+  private validateMaximumTime({ value, context }: ValidateDates) {
     const valueHour = value.getUTCHours();
     if (valueHour > this.maxHour) {
       throw new BadRequestError(
-        `No valid hour for ${context}: Provided: ${valueHour} , maximun ${this.minHour}`,
+        `No valid hour for ${context}: Provided: ${valueHour} , maximum ${this.minHour}`,
       );
     }
   }
@@ -110,22 +122,22 @@ export class Slot extends AggregateRoot<SlotOutputProps> {
   private validateStartDateIsEarlierThanEndDate() {
     if (this.startAt.getTime() >= this.endAt.getTime()) {
       throw new BadRequestError(
-        `Start date ${this.startAt.toISOString()} should be ealier than end date ${this.endAt.toISOString()}`,
+        `Start date ${this.startAt.toISOString()} should be earlier than end date ${this.endAt.toISOString()}`,
       );
     }
   }
 
   private validateElapsedTime() {
-    const oneHourInMiliseconds = 3600000;
+    const oneHourInMilliseconds = 3600000;
     const differenceInMs = this.endAt.getTime() - this.startAt.getTime();
-    const elapsedtimeInHour = differenceInMs / oneHourInMiliseconds;
-    if (elapsedtimeInHour < this.minHoursBooking) {
+    const elapsedTimeInHour = differenceInMs / oneHourInMilliseconds;
+    if (elapsedTimeInHour < this.minHoursBooking) {
       const hourContext = `${this.minHoursBooking} hour${
         this.minHoursBooking > 1 ? "s" : ""
       }`;
       throw new BadRequestError(
         `No valid dated. Field start_at should be at least ${hourContext} before end_at. Provided ${
-          elapsedtimeInHour.toFixed(2)
+          elapsedTimeInHour.toFixed(2)
         } hour fraction.`,
       );
     }
@@ -136,7 +148,7 @@ export class Slot extends AggregateRoot<SlotOutputProps> {
     const days = endAt - startAt;
     if (days > this.maxDays) {
       throw new BadRequestError(
-        `No valid amount of days: Provided: ${days} , maximun ${this.maxDays}`,
+        `No valid amount of days: Provided: ${days} , maximum ${this.maxDays}`,
       );
     }
   }
@@ -149,5 +161,30 @@ export class Slot extends AggregateRoot<SlotOutputProps> {
       startAt: this.startAt.toISOString(),
       state: this.state,
     };
+  }
+  toPersistance() {
+    return {
+      ...this.aggregateRootPrimitives(),
+      user: this.user.id,
+      endAt: this.endAt.toISOString(),
+      startAt: this.startAt.toISOString(),
+      state: this.state,
+    };
+  }
+
+  static fromPrimitives(
+    { startAt, endAt, state, user, ...rest }: SlotOutputProps,
+  ) {
+    return new Slot({
+      ...AggregateRoot.convertOutputToInput(rest),
+      startAt: new Date(startAt),
+      endAt: new Date(endAt),
+      state,
+      user,
+    });
+  }
+
+  static fromPrimitiveCollection(data: SlotOutputProps[]) {
+    return data.map((item) => Slot.fromPrimitives(item));
   }
 }

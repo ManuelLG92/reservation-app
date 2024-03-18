@@ -1,50 +1,47 @@
 import {
   AggregateRoot,
-  AggregateRootProps,
+  AggregateRootOutProps,
 } from "src/common/domain/entity/aggregate-root.entity.ts";
 import { NotFoundError } from "src/common/errors/not-found-error.ts";
 import { Collection } from "mongo";
 
-interface Searchable extends AggregateRootProps {
+interface Searchable extends AggregateRootOutProps {
   _id: string;
 }
-export class GenericCrud<T extends AggregateRoot<AggregateRootProps>> {
-  protected readonly records: Map<string, T>;
+
+export class GenericCrud<
+  T extends AggregateRoot<AggregateRootOutProps, AggregateRootOutProps>,
+> {
+  protected collection: Collection<Searchable>;
   constructor(
     readonly entity: string,
-    protected readonly collection: Collection<Searchable>,
+    collection: Collection<T>,
   ) {
-    this.records = new Map();
+    this.collection = collection as unknown as Collection<Searchable>;
   }
 
   async upsert(value: T): Promise<void> {
-    this.records.set(value.id, value);
     await this.collection.updateOne(
       { _id: value.id },
-      { $set: value.toJson() },
+      { $set: value.toPersistance() },
       { upsert: true },
     );
     return Promise.resolve();
   }
 
   async findById(id: string): Promise<T> {
-    const result = this.records.get(id);
-    const result2 = await this.collection.findOne({ _id: id });
-    console.log(result2);
+    const result = await this.collection.findOne({ _id: id }, {
+      projection: { _id: false },
+    });
     if (result) {
-      return Promise.resolve(result);
+      return result as unknown as Promise<T>;
     }
     throw new NotFoundError(`${this.entity} with id ${id} not found`);
   }
 
   async findAll(): Promise<T[]> {
-    const result2 = this.collection.find({});
-    return result2.toArray() as unknown as T[];
-    for await (const doc of result2) {
-      console.dir(doc);
-    }
-    return Promise.resolve(
-      [...this.records.values()],
-    );
+    const result = this.collection.find({}).project({ _id: false });
+    const data = await result.toArray() as unknown as Promise<T[]>;
+    return data;
   }
 }

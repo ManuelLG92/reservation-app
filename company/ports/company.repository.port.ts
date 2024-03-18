@@ -1,6 +1,9 @@
-import { Company } from "src/company/domain/company.entity.ts";
+import {
+  Company,
+  CompanyToPersistence,
+} from "src/company/domain/company.entity.ts";
 
 export interface CompanyRepository {
-  findAll: () => Promise<Company[]>;
+  findAll: () => Promise<CompanyToPersistence[]>;
   upsert: (value: Company) => Promise<void>;
 }

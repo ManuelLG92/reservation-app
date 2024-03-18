@@ -1,10 +1,16 @@
 export interface AggregateRootProps {
   id: string;
-  createdAt: string;
-  updatedAt: string;
+  createdAt: Date;
+  updatedAt?: Date;
 }
 
-export abstract class AggregateRoot<ToJSON> {
+export interface AggregateRootOutProps {
+  id: string;
+  createdAt: string;
+  updatedAt?: string;
+}
+
+export abstract class AggregateRoot<ToJSON, ToPersistance> {
   get updatedAt(): Date | undefined {
     return this._updatedAt;
   }
@@ -18,16 +24,19 @@ export abstract class AggregateRoot<ToJSON> {
   protected readonly _id: string;
   protected readonly _createdAt: Date;
   protected _updatedAt?: Date;
-  constructor(id?: string) {
+  protected constructor(
+    { id, createdAt, updatedAt }: Partial<AggregateRootProps>,
+  ) {
     this._id = id ?? crypto.randomUUID();
-    this._createdAt = new Date();
+    this._createdAt = createdAt ?? new Date();
+    this._updatedAt = updatedAt ?? new Date();
   }
 
   protected update(value: Date) {
     this._updatedAt = value;
   }
 
-  protected aggregateRootPrimitives(): AggregateRootProps {
+  protected aggregateRootPrimitives(): AggregateRootOutProps {
     return {
       id: this._id,
       createdAt: this._createdAt.toISOString(),
@@ -36,8 +45,18 @@ export abstract class AggregateRoot<ToJSON> {
   }
 
   abstract toJson(): ToJSON;
+  abstract toPersistance(): ToPersistance;
+  static fromPrimitives(data: any): AggregateRoot<unknown, unknown> {
+    throw new Error("Implement in your subclass");
+  }
 
-  protected fromObject(data: Record<string, unknown>) {
-    return { ...data };
+  protected static convertOutputToInput(
+    { id, createdAt, updatedAt }: AggregateRootOutProps,
+  ): AggregateRootProps {
+    return {
+      id,
+      createdAt: new Date(createdAt),
+      updatedAt: updatedAt ? new Date(updatedAt) : undefined,
+    };
   }
 }

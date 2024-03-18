@@ -1,5 +1,6 @@
 import {
   AggregateRoot,
+  AggregateRootOutProps,
   AggregateRootProps,
 } from "src/common/domain/entity/aggregate-root.entity.ts";
 import { Slot, SlotOutputProps } from "src/slots/domain/slot.entity.ts";
@@ -8,21 +9,29 @@ import { BadRequestError } from "src/common/errors/bad-request-error.ts";
 
 // implement in redis with TTL and subscribe to it
 const cache: Record<string, Slot> = {};
-export interface SeatInputProps {
+export interface SeatInputProps extends AggregateRootProps {
   identifier: string;
+  slots: Slot[];
 }
 
-export interface SeatOutputProps extends AggregateRootProps {
+export interface SeatOutputProps extends AggregateRootOutProps {
   identifier: string;
   slots: SlotOutputProps[];
 }
-export class Seat extends AggregateRoot<SeatOutputProps> {
+export interface SeatPersistenceProps extends AggregateRootOutProps {
+  identifier: string;
+  slots: string[];
+}
+export class Seat extends AggregateRoot<SeatOutputProps, SeatPersistenceProps> {
   #identifier: string;
   #slots: Map<string, Slot>;
-  constructor({ identifier }: SeatInputProps) {
-    super();
+  constructor({ identifier, slots, ...rest }: SeatInputProps) {
+    super(rest);
     this.#identifier = identifier;
     const mapSlots = new Map<string, Slot>();
+    slots?.forEach((slot) => {
+      mapSlots.set(slot.id, slot);
+    });
     this.#slots = mapSlots;
   }
 
@@ -41,7 +50,7 @@ export class Seat extends AggregateRoot<SeatOutputProps> {
     );
     if (hasOverlappingSlot) {
       throw new BadRequestError(
-        "Opps. Spot already booked. Choose another seat or change the timeframe",
+        "Oops. Spot already booked. Choose another seat or change the time frame",
       );
     }
   }
@@ -60,7 +69,7 @@ export class Seat extends AggregateRoot<SeatOutputProps> {
     const slot = this.#slots.get(id);
     if (!slot) {
       throw new NotFoundError(
-        `Opps. Spot ${slot} doesn't exist`,
+        `Oops. Spot ${slot} doesn't exist`,
       );
     }
     slot.confirmState();
@@ -89,5 +98,24 @@ export class Seat extends AggregateRoot<SeatOutputProps> {
       identifier: this.identifier,
       slots: this.slots.map((slot) => slot.toJson()),
     };
+  }
+  toPersistance() {
+    return {
+      ...this.aggregateRootPrimitives(),
+      identifier: this.identifier,
+      slots: this.slots.map((slot) => slot.id),
+    };
+  }
+
+  static fromPrimitives({ identifier, slots, ...rest }: SeatOutputProps) {
+    return new Seat({
+      ...AggregateRoot.convertOutputToInput(rest),
+      slots: Slot.fromPrimitiveCollection(slots ?? []),
+      identifier,
+    });
+  }
+
+  static fromPrimitiveCollection(data: SeatOutputProps[]) {
+    return data.map((item) => Seat.fromPrimitives(item));
   }
 }

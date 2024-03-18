@@ -1,5 +1,6 @@
 import {
   AggregateRoot,
+  AggregateRootOutProps,
   AggregateRootProps,
 } from "src/common/domain/entity/aggregate-root.entity.ts";
 import { Seat, SeatOutputProps } from "src/seat/domain/seat.entity.ts";
@@ -9,17 +10,22 @@ export interface FloorProps extends AggregateRootProps {
   seats: Seat[];
 }
 
-export interface FloorPropsOut extends AggregateRootProps {
+export interface FloorPropsOut extends AggregateRootOutProps {
   identifier: string;
   seats: SeatOutputProps[];
 }
-export class Floor extends AggregateRoot<FloorPropsOut> {
+export interface FloorToPersistenceProps extends AggregateRootOutProps {
+  identifier: string;
+  seats: string[];
+}
+export class Floor
+  extends AggregateRoot<FloorPropsOut, FloorToPersistenceProps> {
   #identifier: string;
   #seats: Seat[];
-  constructor(identifier: string) {
-    super();
+  constructor({ identifier, seats, ...father }: FloorProps) {
+    super(father);
     this.#identifier = identifier;
-    this.#seats = [];
+    this.#seats = seats ?? [];
   }
 
   get identifier(): string {
@@ -36,7 +42,7 @@ export class Floor extends AggregateRoot<FloorPropsOut> {
     );
     if (hasOverlapIdentifier) {
       throw new BadRequestError(
-        `Seast identifier should be unique. Identifier ${newIdentifier} already exists.`,
+        `Seats identifier should be unique. Identifier ${newIdentifier} already exists.`,
       );
     }
     this.seats.push(newSeat);
@@ -53,5 +59,25 @@ export class Floor extends AggregateRoot<FloorPropsOut> {
       identifier: this.identifier,
       seats: this.seats.map((it) => it.toJson()),
     };
+  }
+
+  toPersistance(): FloorToPersistenceProps {
+    return {
+      ...this.aggregateRootPrimitives(),
+      identifier: this.identifier,
+      seats: this.seats.map((it) => it.id),
+    };
+  }
+
+  static fromPrimitives({ identifier, seats, ...rest }: FloorPropsOut) {
+    return new Floor({
+      ...AggregateRoot.convertOutputToInput(rest),
+      identifier,
+      seats: Seat.fromPrimitiveCollection(seats),
+    });
+  }
+
+  static fromPrimitiveCollection(data: FloorPropsOut[]) {
+    return data.map((item) => Floor.fromPrimitives(item));
   }
 }

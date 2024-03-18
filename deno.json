@@ -10,6 +10,7 @@
     "hono": "https://deno.land/x/hono@v4.1.0/mod.ts",
     "http-status": "https://deno.land/x/hono@v4.1.0/utils/http-status.ts",
     "mongo": "npm:mongodb@6.5.0",
+    "mongoose": "npm:mongoose@8.2.2",
     "dotenv": "https://deno.land/std@0.220.1/dotenv/mod.ts"
   },
   "tasks": {
