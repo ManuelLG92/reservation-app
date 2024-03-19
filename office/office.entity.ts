@@ -1,26 +1,21 @@
 import {
   AggregateRoot,
-  AggregateRootOutProps,
   AggregateRootProps,
 } from "src/common/domain/entity/aggregate-root.entity.ts";
 import { Floor, FloorPropsOut } from "src/floor/floor.entity.ts";
 import { BadRequestError } from "src/common/errors/bad-request-error.ts";
+import { OfficeSchemaType } from "src/office/office.schema.ts";
 
 export interface OfficeProps extends AggregateRootProps {
   name: string;
   floors: Floor[];
 }
 
-export interface OfficePropsOut extends AggregateRootOutProps {
-  name: string;
+export interface OfficePropsOut extends Omit<OfficeProps, "floors"> {
   floors: FloorPropsOut[];
 }
-export interface OfficeToPersistenceProps extends AggregateRootOutProps {
-  name: string;
-  floors: string[];
-}
-export class Office
-  extends AggregateRoot<OfficePropsOut, OfficeToPersistenceProps> {
+
+export class Office extends AggregateRoot<OfficePropsOut, OfficeSchemaType> {
   #name: string;
   #floors: Floor[];
   constructor({ name, floors, ...father }: OfficeProps) {
@@ -66,7 +61,7 @@ export class Office
 
   static fromPrimitives({ name, floors, ...rest }: OfficePropsOut) {
     return new Office({
-      ...AggregateRoot.convertOutputToInput(rest),
+      ...rest,
       name,
       floors: Floor.fromPrimitiveCollection(floors),
     });

@@ -1,27 +1,20 @@
 import {
   AggregateRoot,
-  AggregateRootOutProps,
   AggregateRootProps,
 } from "src/common/domain/entity/aggregate-root.entity.ts";
 import { Office, OfficePropsOut } from "src/office/office.entity.ts";
 import { BadRequestError } from "src/common/errors/bad-request-error.ts";
+import { CompanySchemaType } from "src/company/adapters/company.schema.ts";
 
 export interface CompanyProps extends AggregateRootProps {
   offices: Office[];
   name: string;
 }
-export interface CompanyPropsOut extends AggregateRootOutProps {
+export interface CompanyPropsOut extends Omit<CompanyProps, "offices"> {
   offices: OfficePropsOut[];
-  name: string;
 }
 
-export interface CompanyToPersistence extends AggregateRootOutProps {
-  offices: string[];
-  name: string;
-}
-
-export class Company
-  extends AggregateRoot<CompanyPropsOut, CompanyToPersistence> {
+export class Company extends AggregateRoot<CompanyPropsOut, CompanySchemaType> {
   #offices: Office[];
   #name: string;
   constructor({ name, offices, ...father }: CompanyProps) {
@@ -73,7 +66,7 @@ export class Company
 
   static fromPrimitives({ name, offices, ...rest }: CompanyPropsOut) {
     return new Company({
-      ...AggregateRoot.convertOutputToInput(rest),
+      ...rest,
       name,
       offices: Office.fromPrimitiveCollection(offices),
     });

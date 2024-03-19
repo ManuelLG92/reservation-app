@@ -1,25 +1,19 @@
 import {
   AggregateRoot,
-  AggregateRootOutProps,
   AggregateRootProps,
 } from "src/common/domain/entity/aggregate-root.entity.ts";
 import { Seat, SeatOutputProps } from "src/seat/domain/seat.entity.ts";
 import { BadRequestError } from "src/common/errors/bad-request-error.ts";
+import { FloorSchemaType } from "src/floor/floor.schema.ts";
 export interface FloorProps extends AggregateRootProps {
   identifier: string;
   seats: Seat[];
 }
 
-export interface FloorPropsOut extends AggregateRootOutProps {
-  identifier: string;
+export interface FloorPropsOut extends Omit<FloorProps, "seats"> {
   seats: SeatOutputProps[];
 }
-export interface FloorToPersistenceProps extends AggregateRootOutProps {
-  identifier: string;
-  seats: string[];
-}
-export class Floor
-  extends AggregateRoot<FloorPropsOut, FloorToPersistenceProps> {
+export class Floor extends AggregateRoot<FloorPropsOut, FloorSchemaType> {
   #identifier: string;
   #seats: Seat[];
   constructor({ identifier, seats, ...father }: FloorProps) {
@@ -61,7 +55,7 @@ export class Floor
     };
   }
 
-  toPersistance(): FloorToPersistenceProps {
+  toPersistance() {
     return {
       ...this.aggregateRootPrimitives(),
       identifier: this.identifier,
@@ -71,7 +65,7 @@ export class Floor
 
   static fromPrimitives({ identifier, seats, ...rest }: FloorPropsOut) {
     return new Floor({
-      ...AggregateRoot.convertOutputToInput(rest),
+      ...rest,
       identifier,
       seats: Seat.fromPrimitiveCollection(seats),
     });

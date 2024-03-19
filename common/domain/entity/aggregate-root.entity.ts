@@ -4,12 +4,6 @@ export interface AggregateRootProps {
   updatedAt?: Date;
 }
 
-export interface AggregateRootOutProps {
-  id: string;
-  createdAt: string;
-  updatedAt?: string;
-}
-
 export abstract class AggregateRoot<ToJSON, ToPersistance> {
   get updatedAt(): Date | undefined {
     return this._updatedAt;
@@ -36,24 +30,14 @@ export abstract class AggregateRoot<ToJSON, ToPersistance> {
     this._updatedAt = value;
   }
 
-  protected aggregateRootPrimitives(): AggregateRootOutProps {
+  protected aggregateRootPrimitives(): AggregateRootProps {
     return {
       id: this._id,
-      createdAt: this._createdAt.toISOString(),
-      updatedAt: this._updatedAt?.toISOString() ?? "null",
+      createdAt: this._createdAt,
+      updatedAt: this._updatedAt,
     };
   }
 
   abstract toJson(): ToJSON;
   abstract toPersistance(): ToPersistance;
-
-  protected static convertOutputToInput(
-    { id, createdAt, updatedAt }: AggregateRootOutProps,
-  ): AggregateRootProps {
-    return {
-      id,
-      createdAt: new Date(createdAt),
-      updatedAt: updatedAt ? new Date(updatedAt) : undefined,
-    };
-  }
 }

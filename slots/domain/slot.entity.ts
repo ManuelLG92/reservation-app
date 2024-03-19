@@ -1,10 +1,10 @@
 import {
   AggregateRoot,
-  AggregateRootOutProps,
   AggregateRootProps,
 } from "src/common/domain/entity/aggregate-root.entity.ts";
-import { User } from "src/user/user.entity.ts";
+import { User, UserProps } from "src/user/user.entity.ts";
 import { BadRequestError } from "src/common/errors/bad-request-error.ts";
+import { SlotsSchemaType } from "src/slots/adapters/slot.schema.ts";
 
 export enum SlotStates {
   draft = "draft",
@@ -18,17 +18,9 @@ export interface SlotInputProps extends Partial<AggregateRootProps> {
   state?: SlotStates;
 }
 
-export interface SlotOutputProps extends AggregateRootOutProps {
-  startAt: string;
-  endAt: string;
+export interface SlotOutputProps extends Omit<SlotInputProps, "user"> {
+  user: UserProps;
   state: SlotStates;
-  user: User;
-}
-export interface SlotToPersistenceProps extends AggregateRootOutProps {
-  startAt: string;
-  endAt: string;
-  state: SlotStates;
-  user: string;
 }
 
 interface ValidateDates {
@@ -36,8 +28,7 @@ interface ValidateDates {
   context: string;
 }
 
-export class Slot
-  extends AggregateRoot<SlotOutputProps, SlotToPersistenceProps> {
+export class Slot extends AggregateRoot<SlotOutputProps, SlotsSchemaType> {
   private readonly minHour = 8;
   private readonly maxHour = 20;
   private readonly maxDays = 7;
@@ -156,9 +147,9 @@ export class Slot
   toJson() {
     return {
       ...this.aggregateRootPrimitives(),
-      user: this.user,
-      endAt: this.endAt.toISOString(),
-      startAt: this.startAt.toISOString(),
+      user: this.user.toJson(),
+      endAt: this.endAt,
+      startAt: this.startAt,
       state: this.state,
     };
   }
@@ -166,8 +157,8 @@ export class Slot
     return {
       ...this.aggregateRootPrimitives(),
       user: this.user.id,
-      endAt: this.endAt.toISOString(),
-      startAt: this.startAt.toISOString(),
+      endAt: this.endAt,
+      startAt: this.startAt,
       state: this.state,
     };
   }
@@ -176,11 +167,11 @@ export class Slot
     { startAt, endAt, state, user, ...rest }: SlotOutputProps,
   ) {
     return new Slot({
-      ...AggregateRoot.convertOutputToInput(rest),
+      ...rest,
       startAt: new Date(startAt),
       endAt: new Date(endAt),
       state,
-      user,
+      user: User.fromPrimitives(user),
     });
   }
 

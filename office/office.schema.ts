@@ -4,7 +4,7 @@ import { baseFields } from "src/common/infrastructure/persistence/mongoose/schem
 
 const officeSchema = new Schema({
   ...baseFields,
-  identifier: { type: String, required: true },
+  name: { type: String, required: true },
   floors: [{ type: String, ref: ReservationSchemas.Floors }],
 });
 

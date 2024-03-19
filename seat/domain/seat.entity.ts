@@ -1,11 +1,11 @@
 import {
   AggregateRoot,
-  AggregateRootOutProps,
   AggregateRootProps,
 } from "src/common/domain/entity/aggregate-root.entity.ts";
 import { Slot, SlotOutputProps } from "src/slots/domain/slot.entity.ts";
 import { NotFoundError } from "src/common/errors/not-found-error.ts";
 import { BadRequestError } from "src/common/errors/bad-request-error.ts";
+import { SeatSchemaType } from "src/seat/adapter/seat.schema.ts";
 
 // implement in redis with TTL and subscribe to it
 const cache: Record<string, Slot> = {};
@@ -14,15 +14,13 @@ export interface SeatInputProps extends AggregateRootProps {
   slots: Slot[];
 }
 
-export interface SeatOutputProps extends AggregateRootOutProps {
-  identifier: string;
+export interface SeatOutputProps extends Omit<SeatInputProps, "slots"> {
   slots: SlotOutputProps[];
 }
-export interface SeatPersistenceProps extends AggregateRootOutProps {
-  identifier: string;
+export interface SeatPersistenceProps extends Omit<SeatOutputProps, "slots"> {
   slots: string[];
 }
-export class Seat extends AggregateRoot<SeatOutputProps, SeatPersistenceProps> {
+export class Seat extends AggregateRoot<SeatOutputProps, SeatSchemaType> {
   #identifier: string;
   #slots: Map<string, Slot>;
   constructor({ identifier, slots, ...rest }: SeatInputProps) {
@@ -109,7 +107,7 @@ export class Seat extends AggregateRoot<SeatOutputProps, SeatPersistenceProps> {
 
   static fromPrimitives({ identifier, slots, ...rest }: SeatOutputProps) {
     return new Seat({
-      ...AggregateRoot.convertOutputToInput(rest),
+      ...rest,
       slots: Slot.fromPrimitiveCollection(slots ?? []),
       identifier,
     });
