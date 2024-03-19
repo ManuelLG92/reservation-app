@@ -1,13 +1,12 @@
-import { NotFoundError } from "src/common/errors/not-found-error.ts";
 import { Model } from "mongoose";
-import { BaseSchemaType } from "src/common/infrastructure/persistence/mongo/mongoose-schemas.ts";
+import { NotFoundError } from "src/common/errors/not-found-error.ts";
+import { BaseSchemaType } from "src/common/infrastructure/persistence/mongoose/schemas/base.schema.ts";
 
 export class GenericCrudV2<
   T extends BaseSchemaType,
 > {
   constructor(
-    readonly entity: string,
-    private readonly collection: Model<T>,
+    protected readonly collection: Model<T>,
   ) {
   }
 
@@ -27,7 +26,9 @@ export class GenericCrudV2<
     if (result) {
       return result;
     }
-    throw new NotFoundError(`${this.entity} with id ${id} not found`);
+    throw new NotFoundError(
+      `${this.collection.modelName} with id ${id} not found`,
+    );
   }
 
   async findAll(): Promise<T[]> {

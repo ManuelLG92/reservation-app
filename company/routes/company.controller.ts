@@ -13,7 +13,6 @@ export class CompanyController {
   async findAll(ctx: Context) {
     const values = await this.repository.findAll();
     this.logger.info(`Found ${values.length} companies`);
-    const primitiveValues = values.map((value) => value.toJson());
-    return ctx.json({ ...primitiveValues }, 200);
+    return ctx.json({ data: values.map((it) => it.toJson()) }, 200);
   }
 }

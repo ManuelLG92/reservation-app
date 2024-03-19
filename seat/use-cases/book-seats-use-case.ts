@@ -23,7 +23,7 @@ export class BookSeatUseCase {
     const slot = new Slot({ startAt, endAt, user });
     seat.addDraftSlot(slot);
     await this.slotRepository.upsert(slot);
-    this.logger.info(`Sloot booked in draft status with id: ${slot.id}`);
+    this.logger.info(`Slot booked in draft status with id: ${slot.id}`);
     await this.seatRepository.upsert(seat);
     return this.bookMapper(slot);
   }
@@ -31,7 +31,8 @@ export class BookSeatUseCase {
   async confirmSlot(id: string) {
     const slot = await this.slotRepository.findById(id);
     slot.confirmState();
-    this.logger.info(`Sloot ${slot.id} confirmed.`);
+    await this.slotRepository.upsert(slot);
+    this.logger.info(`Slot ${slot.id} confirmed.`);
     return this.bookMapper(slot);
   }
 

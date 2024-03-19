@@ -16,18 +16,23 @@ app.use(async (ctx: Context, next: Next) => {
     await next();
   } finally {
     const diffTimeInMs = Date.now() - start;
-    logger.info(`${ctx.req.method} ${diffTimeInMs}`);
+    logger.info(`Method: ${ctx.req.method} - duration: ${diffTimeInMs}`);
     ctx.header("X-Response-Time", `${diffTimeInMs}ms`);
   }
 });
 
 app.onError((error, ctx) => {
   const status = error instanceof BaseError ? error.status : 500;
-  console.log("on error");
-  return ctx.json({
+  const errorBody = {
     error: error.message,
     ...(error instanceof ValidationError && { details: error.details ?? {} }),
-  }, status);
+  };
+  logger.error(`Error:`, {
+    ...errorBody,
+    ...(error.stack && { stack: error.stack }),
+  });
+
+  return ctx.json({ ...errorBody }, status);
 });
 
 registerRoutes(app)();

@@ -11,7 +11,7 @@ export enum SlotStates {
   confirmed = "confirmed",
 }
 
-export interface SlotInputProps extends AggregateRootProps {
+export interface SlotInputProps extends Partial<AggregateRootProps> {
   startAt: Date;
   endAt: Date;
   user: User;

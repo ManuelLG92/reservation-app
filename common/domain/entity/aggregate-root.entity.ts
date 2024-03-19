@@ -46,9 +46,6 @@ export abstract class AggregateRoot<ToJSON, ToPersistance> {
 
   abstract toJson(): ToJSON;
   abstract toPersistance(): ToPersistance;
-  static fromPrimitives(data: any): AggregateRoot<unknown, unknown> {
-    throw new Error("Implement in your subclass");
-  }
 
   protected static convertOutputToInput(
     { id, createdAt, updatedAt }: AggregateRootOutProps,
