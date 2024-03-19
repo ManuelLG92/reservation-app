@@ -1,14 +1,9 @@
 import { InferSchemaType, model, Schema } from "mongoose";
-import { ReservationSchemas } from "src/common/infrastructure/persistence/mongoose/mongoose-schemas.ts";
+import { ReservationSchemas } from "../../common/infrastructure/persistence/mongoose/mongoose-connect.ts";
+import { baseFields } from "src/common/infrastructure/persistence/mongoose/schemas/base.schema.ts";
 
 const Slots = new Schema({
-  _id: {
-    type: String,
-    index: { unique: true },
-  },
-  id: { type: String, required: true },
-  createdAt: { type: Date, required: true },
-  updatedAt: { type: Date },
+  ...baseFields,
   state: { type: String, required: true },
   startAt: { type: Date, required: true },
   endAt: { type: Date, required: true },

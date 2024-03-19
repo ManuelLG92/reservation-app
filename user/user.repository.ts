@@ -1,5 +1,5 @@
 import { Model } from "mongoose";
-import { UserSchemaType } from "src/common/infrastructure/persistence/mongoose/schemas/user.schema.ts";
+import { UserSchemaType } from "./user.schema.ts";
 import { User, UserProps } from "src/user/user.entity.ts";
 
 export class UserRepository {

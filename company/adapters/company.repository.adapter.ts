@@ -1,11 +1,11 @@
+import { Model } from "mongoose";
+import { ReservationSchemas } from "../../common/infrastructure/persistence/mongoose/mongoose-connect.ts";
+import { CompanySchemaType } from "./company.schema.ts";
 import { Company, CompanyPropsOut } from "src/company/domain/company.entity.ts";
 import { CompanyRepository } from "src/company/ports/company.repository.port.ts";
-import { Model } from "mongoose";
-import { companySchemaType } from "src/common/infrastructure/persistence/mongoose/schemas/company.schema.ts";
-import { ReservationSchemas } from "src/common/infrastructure/persistence/mongoose/mongoose-schemas.ts";
 
 export class CompanyRepositoryAdapter implements CompanyRepository {
-  constructor(private readonly model: Model<companySchemaType>) {
+  constructor(private readonly model: Model<CompanySchemaType>) {
   }
 
   async findAll(): Promise<Company[]> {
