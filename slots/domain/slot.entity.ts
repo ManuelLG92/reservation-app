@@ -1,6 +1,7 @@
 import {
   AggregateRoot,
   AggregateRootProps,
+  AggregateRootPropsOnCreation,
 } from "src/common/domain/entity/aggregate-root.entity.ts";
 import { User, UserProps } from "src/user/user.entity.ts";
 import { BadRequestError } from "src/common/errors/bad-request-error.ts";
@@ -11,14 +12,16 @@ export enum SlotStates {
   confirmed = "confirmed",
 }
 
-export interface SlotInputProps extends Partial<AggregateRootProps> {
+export interface SlotInputProps extends AggregateRootPropsOnCreation {
   startAt: Date;
   endAt: Date;
   user: User;
   state?: SlotStates;
 }
 
-export interface SlotOutputProps extends Omit<SlotInputProps, "user"> {
+export interface SlotOutputProps extends AggregateRootProps {
+  startAt: Date;
+  endAt: Date;
   user: UserProps;
   state: SlotStates;
 }
