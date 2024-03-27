@@ -1,16 +1,16 @@
-import { diContainer, DiKeys } from "./common/di-container/di-container.ts";
-import { companyFixture } from "./company/__tests__/company.fixtures.ts";
-import { floorFixture } from "./floor/floor.fixture.ts";
-import { officeFixture } from "./office/office.fixture.ts";
-import { Seat } from "./seat/domain/seat.entity.ts";
-import { seatFixture } from "./seat/seat.fixture.ts";
-import { slotFixture } from "./slots/slot.fixture.ts";
-import { userFixture } from "./user/user.fixture.ts";
+import { diContainer, DiKeys } from "src/common/di-container/di-container.ts";
+// import { companyFixture } from "src/company/__tests__/company.fixtures.ts";
+import { floorFixture } from "src/floor/floor.fixture.ts";
+// import { officeFixture } from "src/office/office.fixture.ts";
+import { Seat } from "src/seat/domain/seat.entity.ts";
+import { seatFixture } from "src/seat/seat.fixture.ts";
+import { slotFixture } from "src/slots/slot.fixture.ts";
+import { userFixture } from "src/user/user.fixture.ts";
 
 export const mainFixtures = () => {
   const userValue = userFixture("my-user-name");
-  const companyValue = companyFixture();
-  const officeInitial = officeFixture();
+  // const companyValue = companyFixture();
+  // const officeInitial = officeFixture();
   const floorInitial = floorFixture();
   const seatInitial = seatFixture("seat-100");
 
@@ -40,21 +40,21 @@ export const mainFixtures = () => {
     DiKeys.FloorRepository,
   );
   floorRepository.upsert(floorInitial);
-  officeInitial.addFloor(floorInitial);
-  const officeRepository = diContainer.resolve(
-    DiKeys.OfficeRepository,
-  );
-  officeRepository.upsert(officeInitial);
+  // officeInitial.addFloor(floorInitial);
+  // const officeRepository = diContainer.resolve(
+  //   DiKeys.OfficeRepository,
+  // );
+  // officeRepository.upsert(officeInitial);
 
-  companyValue.addOffice(officeInitial);
-  const companyRepository = diContainer.resolve(
-    DiKeys.CompanyRepository,
-  );
-  companyRepository.upsert(companyValue);
+  // companyValue.addOffice(officeInitial);
+  // const companyRepository = diContainer.resolve(
+  //   DiKeys.CompanyRepository,
+  // );
+  // companyRepository.upsert(companyValue);
 
-  const userRepository = diContainer.resolve(
-    DiKeys.UserRepository,
-  );
+  // const userRepository = diContainer.resolve(
+  //   DiKeys.UserRepository,
+  // );
 
-  userRepository.upsert(userValue);
+  // userRepository.upsert(userValue);
 };
