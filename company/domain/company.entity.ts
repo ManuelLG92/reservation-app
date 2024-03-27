@@ -1,16 +1,18 @@
 import {
   AggregateRoot,
   AggregateRootProps,
+  AggregateRootPropsOnCreation,
 } from "src/common/domain/entity/aggregate-root.entity.ts";
 import { Office, OfficePropsOut } from "src/office/office.entity.ts";
 import { BadRequestError } from "src/common/errors/bad-request-error.ts";
 import { CompanySchemaType } from "src/company/adapters/company.schema.ts";
 
-export interface CompanyProps extends AggregateRootProps {
+export interface CompanyProps extends AggregateRootPropsOnCreation {
   offices: Office[];
   name: string;
 }
-export interface CompanyPropsOut extends Omit<CompanyProps, "offices"> {
+export interface CompanyPropsOut extends AggregateRootProps {
+  name: string;
   offices: OfficePropsOut[];
 }
 

@@ -20,7 +20,7 @@ export class CompanyMother {
 
   build() {
     const company = new Company(
-      this.name,
+      { name: this.name, offices: [] },
     );
 
     company.bulkAddOffices(this.offices);

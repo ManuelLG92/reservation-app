@@ -1,14 +1,22 @@
 import { Model } from "mongoose";
-import { ReservationSchemas } from "../../common/infrastructure/persistence/mongoose/mongoose-connect.ts";
-import { CompanySchemaType } from "./company.schema.ts";
 import { Company, CompanyPropsOut } from "src/company/domain/company.entity.ts";
-import { CompanyRepository } from "src/company/ports/company.repository.port.ts";
+import {
+  CompanyRepository,
+  FindAllArgs,
+} from "src/company/ports/company.repository.port.ts";
+import { CompanySchemaType } from "src/company/adapters/company.schema.ts";
+import { ReservationSchemas } from "src/common/infrastructure/persistence/mongoose/mongoose-connect.ts";
 
 export class CompanyRepositoryAdapter implements CompanyRepository {
   constructor(private readonly model: Model<CompanySchemaType>) {
   }
 
-  async findAll(): Promise<Company[]> {
+  async findAll(
+    {
+      startAt = new Date(),
+      endAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+    }: FindAllArgs = {},
+  ): Promise<Company[]> {
     const data = await this.model.find({}).populate({
       path: "offices",
       model: ReservationSchemas.Offices,
@@ -25,6 +33,10 @@ export class CompanyRepositoryAdapter implements CompanyRepository {
             path: "slots",
             model: ReservationSchemas.Slots,
             foreignField: "id",
+            match: {
+              startAt: { $gte: startAt },
+              endAt: { $lte: endAt },
+            },
             populate: {
               path: "user",
               model: ReservationSchemas.Users,

@@ -8,7 +8,7 @@ import {
   RouterInterface,
   RouterMethodsRegister,
 } from "src/common/infrastructure/router/contracts.ts";
-import { CompanyController } from "./company.controller.ts";
+import { CompanyController } from "src/company/routes/company.controller.ts";
 
 const companyRepository = diContainer.resolve(DiKeys.CompanyRepository);
 const logger = getLogger();
