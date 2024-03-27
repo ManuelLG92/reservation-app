@@ -1,16 +1,18 @@
 import {
   AggregateRoot,
   AggregateRootProps,
+  AggregateRootPropsOnCreation,
 } from "src/common/domain/entity/aggregate-root.entity.ts";
 import { Seat, SeatOutputProps } from "src/seat/domain/seat.entity.ts";
 import { BadRequestError } from "src/common/errors/bad-request-error.ts";
 import { FloorSchemaType } from "src/floor/floor.schema.ts";
-export interface FloorProps extends AggregateRootProps {
+export interface FloorProps extends AggregateRootPropsOnCreation {
   identifier: string;
   seats: Seat[];
 }
 
-export interface FloorPropsOut extends Omit<FloorProps, "seats"> {
+export interface FloorPropsOut extends AggregateRootProps {
+  identifier: string;
   seats: SeatOutputProps[];
 }
 export class Floor extends AggregateRoot<FloorPropsOut, FloorSchemaType> {
