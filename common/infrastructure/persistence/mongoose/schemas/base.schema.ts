@@ -5,9 +5,9 @@ export const baseFields = {
     type: String,
     index: { unique: true },
   },
-  id: { type: String, required: true },
-  createdAt: { type: Date, required: true },
-  updatedAt: { type: Date },
+  id: { type: String, required: true, index: { unique: true } },
+  createdAt: { type: Date, required: true, index: true },
+  updatedAt: { type: Date, index: true },
 };
-const BaseSchema = new Schema({ ...baseFields });
+const BaseSchema = new Schema({ ...baseFields }, { _id: false, __v: true });
 export type BaseSchemaType = InferSchemaType<typeof BaseSchema>;
