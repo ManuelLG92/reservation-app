@@ -4,6 +4,12 @@ export interface AggregateRootProps {
   updatedAt?: Date;
 }
 
+export interface AggregateRootPropsOnCreation {
+  id?: string;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
+
 export abstract class AggregateRoot<ToJSON, ToPersistance> {
   get updatedAt(): Date | undefined {
     return this._updatedAt;
