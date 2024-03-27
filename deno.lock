@@ -15,6 +15,7 @@
       "jsr:@std/media-types@0.218": "jsr:@std/media-types@0.218.2",
       "jsr:@std/path@0.218": "jsr:@std/path@0.218.2",
       "npm:@types/node": "npm:@types/node@18.16.19",
+      "npm:date-fns@3.6.0": "npm:date-fns@3.6.0",
       "npm:mongodb@6": "npm:mongodb@6.5.0",
       "npm:mongodb@6.5.0": "npm:mongodb@6.5.0",
       "npm:mongoose@8.2.2": "npm:mongoose@8.2.2",
@@ -43,6 +44,10 @@
       },
       "bson@6.5.0": {
         "integrity": "sha512-DXf1BTAS8vKyR90BO4x5v3rKVarmkdkzwOrnYDFdjAY694ILNDkmA3uRh1xXJEl+C1DAh8XCvAQ+Gh3kzubtpg==",
+        "dependencies": {}
+      },
+      "date-fns@3.6.0": {
+        "integrity": "sha512-fRHTG8g/Gif+kSh50gaGEdToemgfj74aRX3swtiouboip5JDLAyDE9F11nHMIcvOaXeOC6D7SpNhi7uFyB7Uww==",
         "dependencies": {}
       },
       "debug@4.3.4": {
