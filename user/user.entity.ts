@@ -1,9 +1,13 @@
 import {
   AggregateRoot,
   AggregateRootProps,
+  AggregateRootPropsOnCreation,
 } from "src/common/domain/entity/aggregate-root.entity.ts";
 import { UserSchemaType } from "src/user/user.schema.ts";
-export interface UserProps extends AggregateRootProps {
+export interface UserProps extends AggregateRootPropsOnCreation {
+  name: string;
+}
+export interface UserPropsOut extends AggregateRootProps {
   name: string;
 }
 export class User extends AggregateRoot<UserProps, UserSchemaType> {
@@ -20,8 +24,8 @@ export class User extends AggregateRoot<UserProps, UserSchemaType> {
   static fromPrimitives({ createdAt, updatedAt, ...rest }: UserProps) {
     const user = new User({
       ...rest,
-      createdAt: new Date(createdAt),
-      updatedAt: updatedAt ? new Date(updatedAt) : undefined,
+      createdAt,
+      updatedAt,
     });
     return user;
   }
