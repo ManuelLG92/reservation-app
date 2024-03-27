@@ -30,9 +30,10 @@ const bookSeatController = new BookSeatController(
 const findSeatsUseCase = new FindSeatsUseCase(logger, seatRepository);
 const findSeatsController = new FindSeatsController(logger, findSeatsUseCase);
 
+const seatRootRoute = "seats";
 export const seatsRoutes = {
-  bookSeat: "seats/bookings",
-  findById: "seats/:id",
+  bookSeat: `${seatRootRoute}/bookings`,
+  findById: `${seatRootRoute}/:id`,
 } as const;
 
 export const seatRoutes: RouterInterface[] = [
@@ -48,6 +49,13 @@ export const seatRoutes: RouterInterface[] = [
     path: seatsRoutes.findById,
     controller: FindSeatsController.prototype.constructor.name,
     handler: findSeatsController.findById,
+    middlewares: [],
+  },
+  {
+    method: RouterMethodsRegister.get,
+    path: seatRootRoute,
+    controller: FindSeatsController.prototype.constructor.name,
+    handler: findSeatsController.findAll,
     middlewares: [],
   },
 ];

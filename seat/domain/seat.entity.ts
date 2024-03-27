@@ -1,6 +1,7 @@
 import {
   AggregateRoot,
   AggregateRootProps,
+  AggregateRootPropsOnCreation,
 } from "src/common/domain/entity/aggregate-root.entity.ts";
 import { Slot, SlotOutputProps } from "src/slots/domain/slot.entity.ts";
 import { NotFoundError } from "src/common/errors/not-found-error.ts";
@@ -9,12 +10,13 @@ import { SeatSchemaType } from "src/seat/adapter/seat.schema.ts";
 
 // implement in redis with TTL and subscribe to it
 const cache: Record<string, Slot> = {};
-export interface SeatInputProps extends AggregateRootProps {
+export interface SeatInputProps extends AggregateRootPropsOnCreation {
   identifier: string;
   slots: Slot[];
 }
 
-export interface SeatOutputProps extends Omit<SeatInputProps, "slots"> {
+export interface SeatOutputProps extends AggregateRootProps {
+  identifier: string;
   slots: SlotOutputProps[];
 }
 export interface SeatPersistenceProps extends Omit<SeatOutputProps, "slots"> {
