@@ -12,7 +12,7 @@ export enum ReservationSchemas {
 export const initMongoose = async (url: string) => {
   try {
     const mongoose = await connect(url);
-    mongoose.set('debug', { shell: true });
+    mongoose.set("debug", { shell: true });
     console.log("mongoose connected");
   } catch (error) {
     console.log(

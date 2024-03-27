@@ -1,18 +1,12 @@
 import { LoggerInterface } from "src/common/observability/logger.ts";
 import { SeatRepository } from "src/seat/ports/seat.repository.port.ts";
-import {
-  differenceInDays,
-  isAfter,
-  isBefore,
-  subDays,
-} from "date-fns";
+import { differenceInDays, isAfter, isBefore, subDays } from "date-fns";
 import {
   CommonSearchOptions,
 } from "src/seat/adapter/seat.repository.adapter.ts";
 
 export interface FindAllNestedPartial extends CommonSearchOptions {
   slots: Partial<CommonSearchOptions>;
-
 }
 export class FindSeatsUseCase {
   constructor(

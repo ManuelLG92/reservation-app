@@ -1,6 +1,9 @@
 import { validate } from "src/common/infrastructure/validator/validator.ts";
 import { LoggerInterface } from "src/common/observability/logger.ts";
-import { findSeatByIdSchema, findSeatsSchema } from "src/seat/router/controller/find-seats/find-seats.schema.ts";
+import {
+  findSeatByIdSchema,
+  findSeatsSchema,
+} from "src/seat/router/controller/find-seats/find-seats.schema.ts";
 import { FindSeatsUseCase } from "src/seat/use-cases/find-seats-use-case.ts";
 import { Context } from "hono";
 
