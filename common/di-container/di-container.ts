@@ -1,21 +1,21 @@
 import { load } from "dotenv";
-import { floorModel } from "../../floor/floor.schema.ts";
-import { officeModel } from "../../office/office.schema.ts";
-import { seatModel } from "../../seat/adapter/seat.schema.ts";
-import { CompanyRepositoryAdapter } from "../../company/adapters/company.repository.adapter.ts";
-import { CompanyRepository } from "../../company/ports/company.repository.port.ts";
-import { FloorRepository } from "../../floor/floor.repository.ts";
-import { OfficeRepository } from "../../office/office.repository.ts";
-import { SeatRepositoryAdapter } from "../../seat/adapter/seat.repository.adapter.ts";
-import { SlotRepositoryAdapter } from "../../slots/adapters/slot.repository.adapter.ts";
-import { initMongoose } from "../infrastructure/persistence/mongoose/mongoose-connect.ts";
+import { floorModel } from "src/floor/floor.schema.ts";
+import { officeModel } from "src/office/office.schema.ts";
+import { seatModel } from "src/seat/adapter/seat.schema.ts";
+import { CompanyRepositoryAdapter } from "src/company/adapters/company.repository.adapter.ts";
+import { CompanyRepository } from "src/company/ports/company.repository.port.ts";
+import { FloorRepository } from "src/floor/floor.repository.ts";
+import { OfficeRepository } from "src/office/office.repository.ts";
+import { SeatRepositoryAdapter } from "src/seat/adapter/seat.repository.adapter.ts";
+import { SlotRepositoryAdapter } from "src/slots/adapters/slot.repository.adapter.ts";
 import { Logger, LoggerInterface } from "../observability/logger.ts";
-import { companyModel } from "../../company/adapters/company.schema.ts";
-import { slotModel } from "../../slots/adapters/slot.schema.ts";
-import { userModel } from "../../user/user.schema.ts";
+import { companyModel } from "src/company/adapters/company.schema.ts";
+import { slotModel } from "src/slots/adapters/slot.schema.ts";
+import { userModel } from "src/user/user.schema.ts";
 import { UserRepository } from "src/user/user.repository.ts";
 import { SeatRepository } from "src/seat/ports/seat.repository.port.ts";
 import { SlotRepository } from "src/slots/ports/slot.repository.port.ts";
+import { initMongoose } from "src/common/infrastructure/persistence/mongoose/mongoose-connect.ts";
 export enum DiKeys {
   CompanyRepository = "CompanyRepository",
   FloorRepository = "FloorRepository",
