@@ -1,17 +1,19 @@
 import {
   AggregateRoot,
   AggregateRootProps,
+  AggregateRootPropsOnCreation,
 } from "src/common/domain/entity/aggregate-root.entity.ts";
 import { Floor, FloorPropsOut } from "src/floor/floor.entity.ts";
 import { BadRequestError } from "src/common/errors/bad-request-error.ts";
 import { OfficeSchemaType } from "src/office/office.schema.ts";
 
-export interface OfficeProps extends AggregateRootProps {
+export interface OfficeProps extends AggregateRootPropsOnCreation {
   name: string;
   floors: Floor[];
 }
 
-export interface OfficePropsOut extends Omit<OfficeProps, "floors"> {
+export interface OfficePropsOut extends AggregateRootProps {
+  name: string;
   floors: FloorPropsOut[];
 }
 
